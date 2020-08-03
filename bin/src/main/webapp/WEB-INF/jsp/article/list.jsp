@@ -16,8 +16,5 @@
 		${article.id} / ${article.regDate} / <a href="./detail?id=${article.id}">${article.title}</a>
 	</div>
 	</c:forEach>
-	<div>
-	<a href="./add">글쓰기</a>
-	</div>
 </body>
 </html>

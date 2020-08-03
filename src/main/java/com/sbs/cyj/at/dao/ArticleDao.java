@@ -1,6 +1,7 @@
 package com.sbs.cyj.at.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,5 +12,11 @@ public interface ArticleDao {
 	List<Article> getForPrintArticles();
 
 	public void delete(long id);
+
+	public void add(Map<String, Object> param);
+
+	Article getArticleById(long id);
+
+	void modify(Map<String, Object> param);
 	
 }
