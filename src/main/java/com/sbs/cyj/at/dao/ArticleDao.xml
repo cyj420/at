@@ -9,4 +9,9 @@
     WHERE displayStatus = 1
     ORDER BY id DESC
   </select>
+  
+  <delete id="delete" parameterType="long">
+    DELETE FROM article
+	WHERE id=#{id}
+  </delete>
 </mapper>

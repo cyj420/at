@@ -9,5 +9,7 @@ import com.sbs.cyj.at.dto.Article;
 @Mapper
 public interface ArticleDao {
 	List<Article> getForPrintArticles();
+
+	public void delete(long id);
 	
 }
