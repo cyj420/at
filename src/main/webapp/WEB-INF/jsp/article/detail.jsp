@@ -25,23 +25,37 @@
 				<div>내용 : ${article.body}</div>
 
 
-				<div class="btns con">
-					<a href="./list">게시물 리스트</a>
-					<a href="./modify?id=${article.id}">게시물 수정</a>
-					<a onclick="if ( confirm('삭제하시겠습니까?') == false ) return false;" href="./doDelete?id=${article.id}">게시물 삭제</a>
+				<div>
+					<div>
+					<a href="./modify?id=${article.id}">수정</a>
+					/
+					<a onclick="if ( confirm('삭제하시겠습니까?') == false ) return false;" href="./doDelete?id=${article.id}">삭제</a>
+					</div>
 				</div>	
 
 				<!-- 이전글 / 다음글 -->
-				<c:if test="${1 != param.id}">
-					<div>
-						<a href="./detail?id=${article.id-1 }">이전글</a>
-					</div>
-				</c:if>
-				<c:if test="${articles[0].id != param.id}">
-					<div>
-						<a href="./detail?id=${article.id+1 }">다음글</a>
-					</div>
-				</c:if>
+				<div style="margin-top: 20px; margin-bottom: 20px;">
+					<c:if test="${articles[size-1].id != param.id}">
+						<c:forEach var="i" begin="0" end="${articles.size()-1 }" step="1">
+						<c:if test="${articles[i].id == param.id }">
+							<div>
+								<a href="./detail?id=${articles[i+1].id }">이전글</a>
+							</div>
+						</c:if>
+						</c:forEach>
+					</c:if>
+					
+					<c:if test="${articles[0].id != param.id}">
+						<c:forEach var="i" begin="0" end="${articles.size()-1 }" step="1">
+						<c:if test="${articles[i].id == param.id }">
+							<div>
+								<a href="./detail?id=${articles[i-1].id }">다음글</a>
+							</div>
+						</c:if>
+						</c:forEach>
+					</c:if>
+				</div>
+				<a href="./list?page=1">게시물 리스트로 돌아가기</a>
 			</div>
 		</c:if>
 	</c:forEach>

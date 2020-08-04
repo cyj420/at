@@ -19,10 +19,16 @@ public class ArticleController {
 	private ArticleService articleService;
 	
 	@RequestMapping("/article/list")
-	public String showList(Model model) {
+	public String showList(Model model, @RequestParam int page) {
+		int itemsInAPage = 5;
+		
 		List<Article> articles = articleService.getForPrintArticles();
+		int fullPage = (articles.size()-1)/5 + 1;
 		
 		model.addAttribute("articles", articles);
+		model.addAttribute("size", articles.size());
+		model.addAttribute("fullPage", fullPage);
+		model.addAttribute("page", page);
 		
 		return "article/list";
 	}
@@ -32,6 +38,7 @@ public class ArticleController {
 		List<Article> articles = articleService.getForPrintArticles();
 		
 		model.addAttribute("articles", articles);
+		model.addAttribute("size", articles.size());
 		
 		return "article/detail";
 	}
@@ -46,7 +53,7 @@ public class ArticleController {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("alert('" + msg + "');");
-		sb.append("location.replace('./list');");
+		sb.append("location.replace('./list?page=1');");
 
 		sb.insert(0, "<script>");
 		sb.append("</script>");

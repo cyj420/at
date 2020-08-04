@@ -30,14 +30,14 @@
 			<span> 제목 </span>
 			<div>
 				<input name="title" type="text" placeholder="제목"
-					autofocus="autofocus">
+					autofocus="autofocus" autocomplete="off">
 			</div>
 		</div>
 	
 		<div>
 			<span> 내용 </span>
 			<div>
-				<textarea name="body" placeholder="내용"></textarea>
+				<textarea name="body" placeholder="내용" autocomplete="off"></textarea>
 			</div>
 		</div>
 	

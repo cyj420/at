@@ -10,11 +10,14 @@
     ORDER BY id DESC
   </select>
   
-  <delete id="delete" parameterType="long">
-	DELETE FROM article
-	WHERE id =
-	#{id}
-  </delete>
+  <update id="delete" parameterType="long">
+	UPDATE article
+	SET updateDate = NOW(),
+	delDate = NOW(),
+	delStatus = 1,
+	displayStatus = 0
+	WHERE id = #{id}
+  </update>
   
   <insert id="add" parameterType="map" useGeneratedKeys="true" keyProperty="id">
 	INSERT INTO article
