@@ -55,7 +55,7 @@
 						</c:forEach>
 					</c:if>
 				</div>
-				<a href="./list?page=1">게시물 리스트로 돌아가기</a>
+				<a href="./list?searchKeyword=&page=1">게시물 리스트로 돌아가기</a>
 			</div>
 		</c:if>
 	</c:forEach>

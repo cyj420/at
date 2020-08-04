@@ -24,28 +24,36 @@
 		form.submit();
 	}
 </script>
-<div style="text-align: center;">
-	<form class="con common-form" action="./doAdd" method="POST" onsubmit="submitAddForm(this); return false;">
+<style>
+.con>div{
+	display: flex;
+}
+
+form>div>div{
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
+<form class="con common-form" action="./doAdd" method="POST" onsubmit="submitAddForm(this); return false;">
+	<div>
 		<div>
-			<span> 제목 </span>
-			<div>
-				<input name="title" type="text" placeholder="제목"
-					autofocus="autofocus" autocomplete="off">
-			</div>
+			<label>제목</label>
+			<input name="title" type="text" placeholder="제목"
+				autofocus="autofocus" autocomplete="off" style="width: 300px;">
 		</div>
-	
+	</div>
+
+	<div style="margin-top: 20px; margin-bottom: 20px;">
 		<div>
-			<span> 내용 </span>
-			<div>
-				<textarea name="body" placeholder="내용" autocomplete="off"></textarea>
-			</div>
+			<label>내용</label>
+			<textarea name="body" placeholder="내용" autocomplete="off" style="width: 300px;"></textarea>
 		</div>
-	
+	</div>
+
+	<div class="button">
 		<div>
-			<div>
-				<input type="submit" value="작성"> 
-				<input type="reset" value="취소" onclick="history.back();">
-			</div>
+			<input type="submit" value="작성"> 
+			<input type="reset" value="취소" onclick="history.back();">
 		</div>
-	</form>
-</div>
+	</div>
+</form>

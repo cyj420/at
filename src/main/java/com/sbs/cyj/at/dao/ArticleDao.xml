@@ -10,6 +10,14 @@
     ORDER BY id DESC
   </select>
   
+  <select id="getForPrintArticlesBySearchKeyword" parameterType="String" resultType="Article">
+    SELECT * 
+    FROM article
+    WHERE displayStatus = 1
+    AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+    ORDER BY id DESC
+  </select>
+  
   <update id="delete" parameterType="long">
 	UPDATE article
 	SET updateDate = NOW(),

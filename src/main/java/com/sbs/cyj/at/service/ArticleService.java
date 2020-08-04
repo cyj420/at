@@ -17,9 +17,11 @@ public class ArticleService {
 	private ArticleDao articleDao;
 	
 	public List<Article> getForPrintArticles() {
-		List<Article> articles = articleDao.getForPrintArticles();
-		
-		return articles;
+		return articleDao.getForPrintArticles();
+	}
+
+	public List<Article> getForPrintArticlesBySearchKeyword(String searchKeyword) {
+		return articleDao.getForPrintArticlesBySearchKeyword(searchKeyword);
 	}
 
 	public void delete(long id) {

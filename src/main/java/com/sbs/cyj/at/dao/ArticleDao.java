@@ -11,6 +11,8 @@ import com.sbs.cyj.at.dto.Article;
 public interface ArticleDao {
 	List<Article> getForPrintArticles();
 
+	List<Article> getForPrintArticlesBySearchKeyword(String searchKeyword);
+
 	public void delete(long id);
 
 	public void add(Map<String, Object> param);
