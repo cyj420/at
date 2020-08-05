@@ -42,6 +42,13 @@
 	WHERE id = #{id}
   </select>
   
+  <select id="getArticleRepliesByArticleId" parameterType="int" resultType="ArticleReply">
+    SELECT * 
+	FROM articleReply
+	WHERE articleId = #{id}
+	AND displayStatus = 1;
+  </select>
+  
   <update id="modify" parameterType="map">
 	UPDATE article
 	SET title = #{title},
@@ -49,5 +56,16 @@
 	body = #{body}
 	WHERE id = #{id}
   </update>
-
+  
+  <update id="modifyArticleReplyById" parameterType="String">
+	UPDATE articleReply
+	SET body = #{body}
+	WHERE id = #{id}
+  </update>
+  
+  <update id="deleteArticleReplyById" parameterType="int">
+  	UPDATE articleReply
+	SET displayStatus = 0
+	WHERE id = #{id}
+  </update>
 </mapper>

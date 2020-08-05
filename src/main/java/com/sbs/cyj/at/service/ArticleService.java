@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.sbs.cyj.at.dao.ArticleDao;
 import com.sbs.cyj.at.dto.Article;
+import com.sbs.cyj.at.dto.ArticleReply;
 import com.sbs.cyj.at.util.Util;
 
 //@Component
@@ -40,6 +41,18 @@ public class ArticleService {
 
 	public void modify(Map<String, Object> param) {
 		articleDao.modify(param);
+	}
+
+	public List<ArticleReply> getArticleRepliesByArticleId(int id) {
+		return articleDao.getArticleRepliesByArticleId(id);
+	}
+
+	public void modifyArticleReplyById(String id, String body) {
+		articleDao.modifyArticleReplyById(id, body);
+	}
+
+	public void deleteArticleReplyById(int id) {
+		articleDao.deleteArticleReplyById(id);
 	}
 }
 

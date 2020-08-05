@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sbs.cyj.at.dto.Article;
+import com.sbs.cyj.at.dto.ArticleReply;
 import com.sbs.cyj.at.service.ArticleService;
 
 @Controller
@@ -39,11 +40,13 @@ public class ArticleController {
 	}
 	
 	@RequestMapping("/article/detail")
-	public String showDetail(Model model) {
+	public String showDetail(Model model, int id) {
 		List<Article> articles = articleService.getForPrintArticles();
+		List<ArticleReply> articleReplies = articleService.getArticleRepliesByArticleId(id);
 		
 		model.addAttribute("articles", articles);
 		model.addAttribute("size", articles.size());
+		model.addAttribute("articleReplies", articleReplies);
 		
 		return "article/detail";
 	}
@@ -107,6 +110,41 @@ public class ArticleController {
 
 		sb.append("alert('" + msg + "');");
 		sb.append("location.replace('./detail?id=" + id + "');");
+
+		sb.insert(0, "<script>");
+		sb.append("</script>");
+
+		return sb.toString();
+	}
+	
+	@RequestMapping("/article/doArticleReplyModify")
+	@ResponseBody
+	public String doArticleReplyModify(@RequestParam int id, int articleId, String body) {
+		System.out.println("댓글수정!");
+		articleService.modifyArticleReplyById(""+id, body);
+		String msg = id + "번 댓글이 수정되었습니다.";
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("alert('" + msg + "');");
+		sb.append("location.replace('./detail?id=" + articleId + "');");
+
+		sb.insert(0, "<script>");
+		sb.append("</script>");
+
+		return sb.toString();
+	}
+	
+	@RequestMapping("/article/doArticleReplyDelete")
+	@ResponseBody
+	public String doArticleReplyDelete(@RequestParam int articleId, int id) {
+		articleService.deleteArticleReplyById(id);
+		String msg = id + "번 댓글이 삭제되었습니다.";
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("alert('" + msg + "');");
+		sb.append("location.replace('./detail?id=" + articleId + "');");
 
 		sb.insert(0, "<script>");
 		sb.append("</script>");

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.sbs.cyj.at.dto.Article;
+import com.sbs.cyj.at.dto.ArticleReply;
 
 @Mapper
 public interface ArticleDao {
@@ -20,5 +21,10 @@ public interface ArticleDao {
 	Article getArticleById(long id);
 
 	void modify(Map<String, Object> param);
-	
+
+	List<ArticleReply> getArticleRepliesByArticleId(int id);
+
+	void modifyArticleReplyById(String id, String body);
+
+	void deleteArticleReplyById(int id);
 }
