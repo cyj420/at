@@ -22,15 +22,16 @@ DROP TABLE IF EXISTS `article`;
 
 CREATE TABLE `article` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `regDate` datetime DEFAULT NULL,
-  `updateDate` datetime DEFAULT NULL,
+  `regDate` datetime NOT NULL,
+  `updateDate` datetime NOT NULL,
   `delDate` datetime DEFAULT NULL,
   `delStatus` tinyint(1) unsigned NOT NULL DEFAULT 0,
   `displayStatus` tinyint(1) unsigned NOT NULL DEFAULT 0,
   `title` char(200) NOT NULL,
   `body` longtext NOT NULL,
+  `memberId` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `articleReply` */
 
@@ -44,7 +45,7 @@ CREATE TABLE `articleReply` (
   `body` char(200) NOT NULL,
   `displayStatus` tinyint(1) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

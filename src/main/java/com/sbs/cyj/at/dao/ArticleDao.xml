@@ -57,6 +57,14 @@
 	WHERE id = #{id}
   </update>
   
+  <insert id="writeArticleReply" parameterType="String" keyProperty="id">
+	INSERT INTO articleReply
+	SET regDate = NOW(),
+	articleId = #{articleId},
+	memberId = 1,
+	body = #{body}
+  </insert>
+  
   <update id="modifyArticleReplyById" parameterType="String">
 	UPDATE articleReply
 	SET body = #{body}

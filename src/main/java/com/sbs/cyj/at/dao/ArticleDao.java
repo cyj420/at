@@ -27,4 +27,6 @@ public interface ArticleDao {
 	void modifyArticleReplyById(String id, String body);
 
 	void deleteArticleReplyById(int id);
+
+	void writeArticleReply(String articleId, String body);
 }

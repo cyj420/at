@@ -54,5 +54,9 @@ public class ArticleService {
 	public void deleteArticleReplyById(int id) {
 		articleDao.deleteArticleReplyById(id);
 	}
+
+	public void writeArticleReply(String articleId, String body) {
+		articleDao.writeArticleReply(articleId, body);
+	}
 }
 

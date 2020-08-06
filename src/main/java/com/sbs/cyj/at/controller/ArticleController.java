@@ -117,10 +117,26 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
+	@RequestMapping("/article/doWriteReply")
+	@ResponseBody
+	public String doArticleReplyWrite(@RequestParam int articleId, String body) {
+		articleService.writeArticleReply(""+articleId, body);
+		String msg = "댓글이 생성되었습니다.";
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("alert('" + msg + "');");
+		sb.append("location.replace('./detail?id=" + articleId + "');");
+
+		sb.insert(0, "<script>");
+		sb.append("</script>");
+
+		return sb.toString();
+	}
+	
 	@RequestMapping("/article/doArticleReplyModify")
 	@ResponseBody
 	public String doArticleReplyModify(@RequestParam int id, int articleId, String body) {
-		System.out.println("댓글수정!");
 		articleService.modifyArticleReplyById(""+id, body);
 		String msg = id + "번 댓글이 수정되었습니다.";
 
