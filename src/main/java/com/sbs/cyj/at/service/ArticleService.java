@@ -58,5 +58,9 @@ public class ArticleService {
 	public void writeArticleReply(String articleId, String body) {
 		articleDao.writeArticleReply(articleId, body);
 	}
+
+	public List<ArticleReply> getArticleRepliesByArticleId(int id, int from) {
+		return articleDao.getArticleRepliesByArticleIdFrom(id, from);
+	}
 }
 

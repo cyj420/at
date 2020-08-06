@@ -178,7 +178,7 @@ h1 {
 							</tr>
 							<tr>
 								<th>작성자id</th>
-								<td>${article.extra.writer}</td>
+								<td>${article.memberId}</td>
 							</tr>
 							<tr>
 								<th>제목</th>
@@ -260,20 +260,16 @@ h1 {
 			    <h1 class="reply-list-title con">댓글 목록</h1>
 			    
 			    <script>
-			    	var ArticleReply__lastLoadedArticleReplyId = 0;
 				    function ArticleReply__loadList(){
 						$.get(
 							'./getForPrintArticleRepliesRs',
 							{
-								id : ${param.id},
-								from : ArticleReply__lastLoadedArticleReplyId + 1
+								id : ${param.id}
 							},
 							function(data){
 								for(var i = 0; i<data.articleReplies.length; i++){
 									var articleReply = data.articleReplies[i];
 									ArticleReply__drawReply(articleReply);
-
-									ArticleReply__lastLoadedArticleReplyId = articleReply.id;
 								}
 							},
 							'json'
@@ -288,7 +284,7 @@ h1 {
 						html = '<tr data-modify-mode="N">';
 						html += '<td>' + articleReply.id + '</td>';
 						html += '<td>' + articleReply.regDate + '</td>';
-						html += '<td>' + articleReply.extra__writer + '</td>';
+						html += '<td>' + articleReply.memberId + '</td>';
 						html += '<td class="reply-body-td">';
 						html += '<div class="modify-mode-invisible">' + articleReply.body + '</div>';
 						html += '<div class="modify-mode-visible">';
@@ -317,8 +313,8 @@ h1 {
 					<!-- html이 다 완성된 상태에서 부르기 위한 방법  -->
 					$(function(){
 						ArticleReply__$listTbody = $('.reply-list > table tbody');
-						/* ArticleReply__loadList(); */
-						setInterval(ArticleReply__loadList, 1000);
+						ArticleReply__loadList();
+						/* setInterval(ArticleReply__loadList, 1000); */
 					});
 
 			    </script>

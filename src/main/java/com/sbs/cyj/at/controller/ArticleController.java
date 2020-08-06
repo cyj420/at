@@ -154,8 +154,8 @@ public class ArticleController {
 	
 	@RequestMapping("/article/getForPrintArticleRepliesRs")
 	@ResponseBody
-	public Map<String, Object> getForPrintArticleRepliesRs(int id) {
-		List<ArticleReply> articleReplies = articleService.getArticleRepliesByArticleId(id);
+	public Map<String, Object> getForPrintArticleRepliesRs(int id, int from) {
+		List<ArticleReply> articleReplies = articleService.getArticleRepliesByArticleId(id, from);
 		System.out.println("articleReplies.size() : " + articleReplies.size());
 		Map<String, Object> rs = new HashMap<>();
 		rs.put("resultCode", "S-1");

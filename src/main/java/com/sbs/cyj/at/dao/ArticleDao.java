@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.sbs.cyj.at.dto.Article;
 import com.sbs.cyj.at.dto.ArticleReply;
@@ -29,4 +30,6 @@ public interface ArticleDao {
 	void deleteArticleReplyById(int id);
 
 	void writeArticleReply(String articleId, String body);
+
+	List<ArticleReply> getArticleRepliesByArticleIdFrom(int id, int from);
 }

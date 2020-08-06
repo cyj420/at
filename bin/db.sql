@@ -47,25 +47,7 @@ CREATE TABLE `articleReply` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
-
-CREATE TABLE `member` (
-  id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  regDate DATETIME NOT NULL,
-  updateDate DATETIME,
-  loginId CHAR(50) NOT NULL,
-  loginPw CHAR(120) NOT NULL,
-  `name` CHAR(50) NOT NULL,
-  nickname CHAR(50) NOT NULL
-);
-
-INSERT INTO `member`
-SET regDate = NOW(),
-updateDate = NOW(),
-loginId = 'admin',
-loginPw = 'admin',
-`name` = 'ad',
-nickname = '관리자'
-
-
-ALTER TABLE article
-ADD memberId INT(10) UNSIGNED NOT NULL
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
