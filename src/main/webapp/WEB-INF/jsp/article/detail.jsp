@@ -203,7 +203,32 @@ h1 {
 				<!-- 댓글 -->
 				<h1 class="reply-write-title con">댓글 작성</h1>
 			    <div class="reply-write con">
-			      <form action="./doWriteReply" method="POST" onsubmit="Article__writeReply(this);">
+			    
+			    <script>
+				    function ArticleReply__submitWriteForm(form){
+					    form.body.value = form.body.value.trim();
+					    if(form.body.value.length == 0){
+						    alert('내용을 입력하세요.');
+						    form.body.focus();
+						    return;
+						}
+						$.post('./doWriteReplyAjax', {
+							articleId : ${param.id},
+							body : form.body.value
+						}, function(data){
+							if(data.msg){
+								alert(data.msg);
+							}
+							if(data.resultCode.substr(0,2) == 'S-'){
+								location.reload(); // 임시
+							}
+						}, 'json');
+	
+						form.body.value = '';
+					}
+			    </script>
+			    
+			      <form action="" onsubmit="ArticleReply__submitWriteForm(this); return false;">
 			      <input type="hidden" name="articleId" value="${article.id}" />
 			        <table>
 			          <colgroup>
@@ -229,12 +254,76 @@ h1 {
 			        </table>
 			      </form>
 			    </div>
+			    
+			    
+			    
 			    <h1 class="reply-list-title con">댓글 목록</h1>
+			    
+			    <script>
+				    function ArticleReply__loadList(){
+						$.get(
+							'./getForPrintArticleRepliesRs',
+							{
+								id : ${param.id}
+							},
+							function(data){
+								for(var i = 0; i<data.articleReplies.length; i++){
+									var articleReply = data.articleReplies[i];
+									ArticleReply__drawReply(articleReply);
+								}
+							},
+							'json'
+						);
+					}
+
+					var ArticleReply__$listTbody;
+					
+					function ArticleReply__drawReply(articleReply){
+						var html = '';
+
+						html = '<tr data-modify-mode="N">';
+						html += '<td>' + articleReply.id + '</td>';
+						html += '<td>' + articleReply.regDate + '</td>';
+						html += '<td>' + articleReply.memberId + '</td>';
+						html += '<td class="reply-body-td">';
+						html += '<div class="modify-mode-invisible">' + articleReply.body + '</div>';
+						html += '<div class="modify-mode-visible">';
+						html += '<form action="./doArticleReplyModify" onsubmit="Article__modifyReply(this);">';
+						html += '<input type="hidden" name="id" value="' + articleReply.id + '" />';
+						html += '<input type="hidden" name="articleId" value="' + articleReply.articleId + '" />';
+						html += '<textarea maxlength="300" name="body"></textarea>';
+						/* 
+						html += '<input type="submit" value="수정완료" />';
+						 */
+						html += '</form>';
+						html += '</div>';
+						html += '</td>';
+						html += '<td>';
+						html += '<a href="#" onclick="if ( confirm(\'삭제하시겠습니까?\') == false ) return false;"</a>';
+						html += '<a href="#" onclick="Article__deleteReply(this, ${ar.id});">삭제</a>';
+						html += '<a class="modify-mode-invisible" href="javascript:;" onclick="Article__turnOnModifyMode(this);">수정</a>';
+						html += '<a class="modify-mode-visible" href="javascript:;" onclick="Article__turnOffModifyMode(this);">수정취소</a>';
+						html += '</td>';
+						html += '</tr>';
+						
+						
+						ArticleReply__$listTbody.prepend(html);
+					}
+					
+					<!-- html이 다 완성된 상태에서 부르기 위한 방법  -->
+					$(function(){
+						ArticleReply__$listTbody = $('.reply-list > table tbody');
+						ArticleReply__loadList();
+						/* setInterval(ArticleReply__loadList, 1000); */
+					});
+
+			    </script>
+			    
 			    <div class="reply-list list con">
 			      <table>
 			        <colgroup>
 			          <col width="50" />
-			          <col width="150" />
+			          <col width="180" />
 			          <col width="100" />
 			          <col />
 			          <col width="100" />
@@ -248,9 +337,10 @@ h1 {
 			            <th>비고</th>
 			          </tr>
 			        </thead>
+					
 			        <tbody>
+					<%-- 
 			        
-				
 					<c:forEach items="${articleReplies}" var="ar">
 			          <tr data-modify-mode="N">
 			            <td>${ar.id }</td>
@@ -268,8 +358,9 @@ h1 {
 			              </div>
 			            </td>
 			            <td>
-			              <a href="./doArticleReplyDelete?articleId=${ar.articleId }&id=${ar.id }" onclick="if ( confirm('삭제하시겠습니까?') == false ) return false;"
-			              <%-- <a href="./doArticleReplyDelete?articleId=${ar.articleId }&id=${ar.id }" onclick="Article__deleteReply(this, ${ar.id});" --%>
+			              <a href="./doArticleReplyDelete?articleId=${ar.articleId }&id=${ar.id }" onclick="if ( confirm('삭제하시겠습니까?') == false ) return false;"</a
+			              >
+			              <a href="./doArticleReplyDelete?articleId=${ar.articleId }&id=${ar.id }" onclick="Article__deleteReply(this, ${ar.id});"
 			                >삭제</a
 			              >
 			              <a
@@ -287,8 +378,10 @@ h1 {
 			            </td>
 			          </tr>
 					</c:forEach>
+					--%>
 			        </tbody>
-			      </table>
+					
+			      </table> 
 			    </div>
 				
 				<!-- 이전글 / 다음글 -->
