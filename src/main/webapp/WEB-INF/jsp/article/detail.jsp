@@ -91,7 +91,7 @@ body, ul, li, h1 {
 </style>
 <script>
 
-	function Article__writeReply(form) {
+	/* function Article__writeReply(form) {
 	  form.body.value = form.body.value.trim();
 
 	  if (form.body.value.length == 0) {
@@ -104,54 +104,24 @@ body, ul, li, h1 {
 	  $form.find('input[type="submit"]').val("작성중...");
 	  $form.find('input[type="submit"]').prop("disabled", true);
 	  $form.find('input[type="reset"]').prop("disabled", true);
-	}
+	} */
 	
-	/* 
 	function Article__deleteReply(el, id) {
 	  if (confirm(id + "번 댓글을 삭제하시겠습니까?") == false) {
 	    return;
 	  }
 	  var $tr = $(el).closest("tr");
-	}
-	 */
 
-	function Article__modifyReply(form) {
-	  form.body.value = form.body.value.trim();
-	  if (form.body.value.length == 0) {
-	    form.body.focus();
-	    alert("내용을 입력해주세요.");
-	    return;
-	  }
-	  var $tr = $(form).closest("tr");
-	  $tr.attr("data-modify-mode", "N");
-
-	  var newBody = form.body.value;
-	  var id = form.id.value;
-
-	  // 임시 테스트용
-	  $tr
-	    .find(">.reply-body-td>.modify-mode-invisible")
-	    .empty()
-	    .append(newBody);
-	}
-
-
-	function Article__turnOnModifyMode(el) {
-	  var $tr = $(el).closest("tr");
-
-	  var body = $tr
-	    .find(">.reply-body-td>.modify-mode-invisible")
-	    .html()
-	    .trim();
-
-	  $tr.find(">.reply-body-td>.modify-mode-visible>form>textarea").val(body);
-
-	  $tr.attr("data-modify-mode", "Y");
-	  $tr.siblings('[data-modify-mode="Y"]').attr("data-modify-mode", "N");
-	}
-	function Article__turnOffModifyMode(el) {
-	  var $tr = $(el).closest("tr");
-	  $tr.attr("data-modify-mode", "N");
+		$.post(
+			  './doDeleteReplyAjax',
+			  {
+				  id:id
+			},
+			function(){
+				$tr.remove();
+			},
+			'json'
+		);
 	}
 </script>
 <script
@@ -177,7 +147,7 @@ body, ul, li, h1 {
 							<td>${article.regDate}</td>
 						</tr>
 						<tr>
-							<th>작성자id</th>
+							<th>작성자</th>
 							<td>${article.extra.writer}</td>
 						</tr>
 						<tr>
@@ -199,6 +169,73 @@ body, ul, li, h1 {
 				</table>
 			</div>
 
+			<script>
+			function Article__modifyReply(form) {
+			  form.body.value = form.body.value.trim();
+			  if (form.body.value.length == 0) {
+			    form.body.focus();
+			    alert("내용을 입력해주세요.");
+			    return;
+			  }
+			  var $tr = $(form).closest("tr");
+			  $tr.attr("data-modify-mode", "N");
+
+			  var newBody = form.body.value;
+			  var id = form.id.value;
+
+			  $.post('./doArticleReplyModifyAjax',{
+				  id : id,
+				  articleId : param.id,
+				  body : newBody
+			  }, function(data){
+				  alert(data.msg);
+			  }, 'json');
+			  // 임시 테스트용
+			  $tr
+			    .find(">.reply-body-td>.modify-mode-invisible")
+			    .empty()
+			    .append(newBody);
+			}
+
+/* 			function Article__deleteReply(el, id) {
+				  if (confirm(id + "번 댓글을 삭제하시겠습니까?") == false) {
+				    return;
+				  }
+				  var $tr = $(el).closest("tr");
+
+					$.post(
+						  './doDeleteReplyAjax',
+						  {
+							  id:id
+						},
+						function(){
+							$tr.remove();
+						},
+						'json'
+					);
+				} */
+
+
+			function Article__turnOnModifyMode(el) {
+			  var $tr = $(el).closest("tr");
+
+			  var body = $tr
+			    .find(">.reply-body-td>.modify-mode-invisible")
+			    .html()
+			    .trim();
+
+			  $tr.find(">.reply-body-td>.modify-mode-visible>form>textarea").val(body);
+
+			  $tr.attr("data-modify-mode", "Y");
+			  $tr.siblings('[data-modify-mode="Y"]').attr("data-modify-mode", "N");
+			}
+			
+			function Article__turnOffModifyMode(el) {
+			  var $tr = $(el).closest("tr");
+			  $tr.attr("data-modify-mode", "N");
+			}
+			</script>
+			
 			<!-- 댓글 -->
 			<c:if test="${isLogined}">
 				<h2 class="reply-write-title con">댓글 작성</h2>
@@ -256,68 +293,70 @@ body, ul, li, h1 {
 			<h1 class="reply-list-title con">댓글 목록</h1>
 
 			<script>
-			    	var ArticleReply__lastLoadedArticleReplyId = 0;
-				    function ArticleReply__loadList(){
-						$.get(
-							'./getForPrintArticleRepliesRs',
-							{
-								id : ${param.id},
-								from : ArticleReply__lastLoadedArticleReplyId + 1
-							},
-							function(data){
-								for(var i = 0; i<data.articleReplies.length; i++){
-									var articleReply = data.articleReplies[i];
-									ArticleReply__drawReply(articleReply);
+		    	var ArticleReply__lastLoadedArticleReplyId = 0;
+			    function ArticleReply__loadList(){
+					$.get(
+						'./getForPrintArticleRepliesRs',
+						{
+							id : ${param.id},
+							from : ArticleReply__lastLoadedArticleReplyId + 1
+						},
+						function(data){
+							for(var i = 0; i<data.articleReplies.length; i++){
+								var articleReply = data.articleReplies[i];
+								ArticleReply__drawReply(articleReply);
 
-									ArticleReply__lastLoadedArticleReplyId = articleReply.id;
-								}
-							},
-							'json'
-						);
-					}
+								ArticleReply__lastLoadedArticleReplyId = articleReply.id;
+							}
+						},
+						'json'
+					);
+				}
 
-					var ArticleReply__$listTbody;
+				var ArticleReply__$listTbody;
+				
+				function ArticleReply__drawReply(articleReply){
+					var html = '';
+
+					html = '<tr data-id="'+articleReply.id+'" data-modify-mode="N">';
+					html += '<td>' + articleReply.id + '</td>';
+					html += '<td>' + articleReply.regDate + '</td>';
+					html += '<td>' + articleReply.extra__writer + '</td>';
+					html += '<td class="reply-body-td">';
+					html += '<div class="modify-mode-invisible">' + articleReply.body + '</div>';
+					html += '<div class="modify-mode-visible">';
+					html += '<form action="" onclick="Article__modifyReply(this); return false;">';
+					html += '<input type="hidden" name="id" value="' + articleReply.id + '" />';
+					html += '<input type="hidden" name="articleId" value="' + articleReply.articleId + '" />'; 
+					html += '<textarea maxlength="300" name="body"></textarea>';
+					/* html += '<button onclick="Article__modifyReply(this);">수정완료</button>'; */
+					html += '<input type="submit" value="수정완료" />';
+					html += '</form>';
+					html += '</div>';
+					html += '</td>';
+					html += '<td>';
+					html += '<button onclick="Article__deleteReply(this,'+ articleReply.id+');">삭제</button>';
+					html += '<button onclick="Article__turnOnModifyMode(this);" class="modify-mode-invisible" href="javascript:;">수정</button>';
+					html += '<button onclick="Article__turnOffModifyMode(this);" class="modify-mode-visible" href="javascript:;">취소</button>';
+					/* 
+					html += '<a class="modify-mode-invisible" href="javascript:;" onclick="Article__turnOnModifyMode(this);">수정</a>';
+					html += '<a class="modify-mode-visible" href="javascript:;" onclick="Article__turnOffModifyMode(this);">수정취소</a>'; 
+					*/
+					html += '</td>';
+					html += '</tr>';
 					
-					function ArticleReply__drawReply(articleReply){
-						var html = '';
-
-						html = '<tr data-modify-mode="N">';
-						html += '<td>' + articleReply.id + '</td>';
-						html += '<td>' + articleReply.regDate + '</td>';
-						html += '<td>' + articleReply.extra__writer + '</td>';
-						html += '<td class="reply-body-td">';
-						html += '<div class="modify-mode-invisible">' + articleReply.body + '</div>';
-						html += '<div class="modify-mode-visible">';
-						html += '<form action="./doArticleReplyModify" onsubmit="Article__modifyReply(this);">';
-						html += '<input type="hidden" name="id" value="' + articleReply.id + '" />';
-						html += '<input type="hidden" name="articleId" value="' + articleReply.articleId + '" />';
-						html += '<textarea maxlength="300" name="body"></textarea>';
-						/* 
-						html += '<input type="submit" value="수정완료" />';
-						 */
-						html += '</form>';
-						html += '</div>';
-						html += '</td>';
-						html += '<td>';
-						html += '<a href="#" onclick="if ( confirm(\'삭제하시겠습니까?\') == false ) return false;"</a>';
-						html += '<a href="#" onclick="Article__deleteReply(this, ${ar.id});">삭제</a>';
-						html += '<a class="modify-mode-invisible" href="javascript:;" onclick="Article__turnOnModifyMode(this);">수정</a>';
-						html += '<a class="modify-mode-visible" href="javascript:;" onclick="Article__turnOffModifyMode(this);">수정취소</a>';
-						html += '</td>';
-						html += '</tr>';
-						
-						
-						ArticleReply__$listTbody.prepend(html);
-					}
 					
-					<!-- html이 다 완성된 상태에서 부르기 위한 방법  -->
-					$(function(){
-						ArticleReply__$listTbody = $('.reply-list > table tbody');
-						ArticleReply__loadList();
-						setInterval(ArticleReply__loadList, 1000);
-					});
+					ArticleReply__$listTbody.prepend(html);
+				}
+				
+				<!-- html이 다 완성된 상태에서 부르기 위한 방법  -->
+				$(function(){
+					ArticleReply__$listTbody = $('.reply-list > table tbody');
+					ArticleReply__loadList();
+					setInterval(ArticleReply__loadList, 1000);
+				});
 
-			    </script>
+		    </script>
 
 			<div class="reply-list list con">
 				<table>
@@ -339,46 +378,6 @@ body, ul, li, h1 {
 					</thead>
 
 					<tbody>
-						<%-- 
-			        
-					<c:forEach items="${articleReplies}" var="ar">
-			          <tr data-modify-mode="N">
-			            <td>${ar.id }</td>
-			            <td>${ar.regDate }</td>
-			            <td>${ar.memberId }</td>
-			            <td class="reply-body-td">
-			              <div class="modify-mode-invisible">${ar.body }</div>
-			              <div class="modify-mode-visible">
-			                <form action="./doArticleReplyModify" onsubmit="Article__modifyReply(this);">
-			                  <input type="hidden" name="id" value="${ar.id }" />
-			                  <input type="hidden" name="articleId" value="${ar.articleId }" />
-			                  <textarea maxlength="300" name="body"></textarea>
-			                  <input type="submit" value="수정완료" />
-			                </form>
-			              </div>
-			            </td>
-			            <td>
-			              <a href="./doArticleReplyDelete?articleId=${ar.articleId }&id=${ar.id }" onclick="if ( confirm('삭제하시겠습니까?') == false ) return false;"</a
-			              >
-			              <a href="./doArticleReplyDelete?articleId=${ar.articleId }&id=${ar.id }" onclick="Article__deleteReply(this, ${ar.id});"
-			                >삭제</a
-			              >
-			              <a
-			                class="modify-mode-invisible"
-			                href="javascript:;"
-			                onclick="Article__turnOnModifyMode(this);"
-			                >수정</a
-			              >
-			              <a
-			                class="modify-mode-visible"
-			                href="javascript:;"
-			                onclick="Article__turnOffModifyMode(this);"
-			                >수정취소</a
-			              >
-			            </td>
-			          </tr>
-					</c:forEach>
-					--%>
 					</tbody>
 
 				</table>

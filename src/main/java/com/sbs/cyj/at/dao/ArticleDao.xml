@@ -104,7 +104,9 @@
   
   <update id="deleteArticleReplyById" parameterType="int">
   	UPDATE articleReply
-	SET displayStatus = 0
+	SET displayStatus = 0,
+	delDate = NOW(),
+	delStatus = 1
 	WHERE id = #{id}
   </update>
   

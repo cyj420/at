@@ -121,48 +121,11 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
-//	@RequestMapping("/usr/article/doWriteReply")
-//	@ResponseBody
-//	public String doArticleReplyWrite(@RequestParam int articleId, String body) {
-//		articleService.writeArticleReply(""+articleId, body);
-//		String msg = "댓글이 생성되었습니다.";
-//
-//		StringBuilder sb = new StringBuilder();
-//
-//		sb.append("alert('" + msg + "');");
-//		sb.append("location.replace('./detail?id=" + articleId + "');");
-//
-//		sb.insert(0, "<script>");
-//		sb.append("</script>");
-//
-//		return sb.toString();
-//	}
-	
-//	@RequestMapping("/usr/article/doWriteReplyAjax")
-//	@ResponseBody
-//	public String doArticleReplyWriteAjax(@RequestParam int articleId, String body) {
-//		articleService.writeArticleReply(""+articleId, body);
-//		String msg = "댓글이 생성되었습니다.";
-//
-//		StringBuilder sb = new StringBuilder();
-//
-//		sb.append("alert('" + msg + "');");
-//		sb.append("location.replace('./detail?id=" + articleId + "');");
-//
-//		sb.insert(0, "<script>");
-//		sb.append("</script>");
-//
-//		return sb.toString();
-//	}
-	
 	@RequestMapping("/usr/article/doWriteReplyAjax")
 	@ResponseBody
 	public ResultData doWriteReplyAjax(@RequestParam Map<String, Object> param, HttpServletRequest request) {
 		Map<String, Object> rsDataBody = new HashMap<>();
 		param.put("memberId", request.getAttribute("loginedMemberId"));
-		System.out.println("request.getAttribute(\"loginedMemberId\") : " + request.getAttribute("loginedMemberId"));
-		System.out.println("memberId : "+param.get("memberId"));
-		System.out.println("param : "+param.toString());
 		int newArticleReplyId = articleService.writeArticleReply(param);
 		rsDataBody.put("articleReplyId", newArticleReplyId);
 
@@ -181,37 +144,31 @@ public class ArticleController {
 		return rs;
 	}
 	
-	@RequestMapping("/usr/article/doArticleReplyModify")
+//	원본
+//	@RequestMapping("/usr/article/getForPrintArticleRepliesRs")
+//	@ResponseBody
+//	public Map<String, Object> getForPrintArticleRepliesRs(int id, int from) {
+//		List<ArticleReply> articleReplies = articleService.getArticleRepliesByArticleId(id, from);
+//		Map<String, Object> rs = new HashMap<>();
+//		rs.put("resultCode", "S-1");
+//		rs.put("msg", String.format("총 %d개의 댓글이 있습니다.", articleReplies.size()));
+//		rs.put("articleReplies", articleReplies);
+//
+//		return rs;
+//	}
+	
+	@RequestMapping("/usr/article/doArticleReplyModifyAjax")
 	@ResponseBody
-	public String doArticleReplyModify(@RequestParam int id, int articleId, String body) {
+	public ResultData doArticleReplyModify(@RequestParam int id, int articleId, String body) {
 		articleService.modifyArticleReplyById(""+id, body);
-		String msg = id + "번 댓글이 수정되었습니다.";
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("alert('" + msg + "');");
-		sb.append("location.replace('./detail?id=" + articleId + "');");
-
-		sb.insert(0, "<script>");
-		sb.append("</script>");
-
-		return sb.toString();
+		return new ResultData("S-1", String.format("%d번 댓글을 삭제하였습니다.", id));
 	}
 	
-	@RequestMapping("/usr/article/doArticleReplyDelete")
+	@RequestMapping("/usr/article/doDeleteReplyAjax")
 	@ResponseBody
-	public String doArticleReplyDelete(@RequestParam int articleId, int id) {
+	public ResultData doDeleteReplyAjax(int id) {
 		articleService.deleteArticleReplyById(id);
-		String msg = id + "번 댓글이 삭제되었습니다.";
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("alert('" + msg + "');");
-		sb.append("location.replace('./detail?id=" + articleId + "');");
-
-		sb.insert(0, "<script>");
-		sb.append("</script>");
-
-		return sb.toString();
+		
+		return new ResultData("S-1", String.format("%d번 댓글을 삭제하였습니다.", id));
 	}
 }
