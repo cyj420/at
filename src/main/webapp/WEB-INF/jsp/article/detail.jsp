@@ -1,13 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>게시물 상세보기</title>
-</head>
+<c:set var="pageTitle" value="게시물 상세보기" />
+<%@ include file="../part/head.jspf"%>
 <style>
 	/* 폰트 적용 */
 @import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
@@ -85,8 +80,6 @@ h1 {
   box-sizing: border-box;
   display: block;
 }
-/* 게시물 본문 내용 */
-.article-detail-list
 </style>
 <script>
 
@@ -154,13 +147,11 @@ h1 {
 	}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<body>
 	
 	<!-- 본문 내용 시작 -->
 	<c:forEach items="${articles}" var="article">
 		<c:if test="${article.id == param.id}">
 			<div class="table-box con">
-				<h1 class="article-detail-list-title con">게시물 상세보기</h1>
 				<div class="article-detail-list list con">
 					<table>
 						<colgroup>
@@ -416,5 +407,4 @@ h1 {
 			</div>
 		</c:if>
 	</c:forEach>
-</body>
-</html>
+<%@ include file="../part/foot.jspf"%>

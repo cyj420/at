@@ -20,7 +20,7 @@ public class ArticleController {
 	@Autowired
 	private ArticleService articleService;
 	
-	@RequestMapping("/article/list")
+	@RequestMapping("/usr/article/list")
 	public String showList(Model model, @RequestParam int page, String searchKeyword) {
 		int itemsInAPage = 5;
 		
@@ -40,7 +40,7 @@ public class ArticleController {
 		return "article/list";
 	}
 	
-	@RequestMapping("/article/detail")
+	@RequestMapping("/usr/article/detail")
 	public String showDetail(Model model, int id) {
 		List<Article> articles = articleService.getForPrintArticles();
 		List<ArticleReply> articleReplies = articleService.getArticleRepliesByArticleId(id);
@@ -52,7 +52,7 @@ public class ArticleController {
 		return "article/detail";
 	}
 	
-	@RequestMapping("/article/doDelete")
+	@RequestMapping("/usr/article/doDelete")
 	@ResponseBody
 	public String doDelete(long id) {
 		articleService.delete(id);
@@ -70,12 +70,12 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
-	@RequestMapping("/article/add")
+	@RequestMapping("/usr/article/add")
 	public String showAdd() {
 		return "article/add";
 	}
 	
-	@RequestMapping("/article/doAdd")
+	@RequestMapping("/usr/article/doAdd")
 	@ResponseBody
 	public String doAdd(@RequestParam Map<String, Object> param) {
 		long newId = articleService.add(param);
@@ -93,14 +93,14 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
-	@RequestMapping("/article/modify")
+	@RequestMapping("/usr/article/modify")
 	public String showModify(Model model, long id) {
 		Article article = articleService.getArticleById(id);
 		model.addAttribute("article", article);
 		return "article/modify";
 	}
 	
-	@RequestMapping("/article/doModify")
+	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
 	public String doModify(@RequestParam Map<String, Object> param, long id) {
 		articleService.modify(param);
@@ -118,7 +118,7 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
-	@RequestMapping("/article/doWriteReply")
+	@RequestMapping("/usr/article/doWriteReply")
 	@ResponseBody
 	public String doArticleReplyWrite(@RequestParam int articleId, String body) {
 		articleService.writeArticleReply(""+articleId, body);
@@ -135,7 +135,7 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
-	@RequestMapping("/article/doWriteReplyAjax")
+	@RequestMapping("/usr/article/doWriteReplyAjax")
 	@ResponseBody
 	public String doArticleReplyWriteAjax(@RequestParam int articleId, String body) {
 		articleService.writeArticleReply(""+articleId, body);
@@ -152,11 +152,10 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
-	@RequestMapping("/article/getForPrintArticleRepliesRs")
+	@RequestMapping("/usr/article/getForPrintArticleRepliesRs")
 	@ResponseBody
 	public Map<String, Object> getForPrintArticleRepliesRs(int id, int from) {
 		List<ArticleReply> articleReplies = articleService.getArticleRepliesByArticleId(id, from);
-		System.out.println("articleReplies.size() : " + articleReplies.size());
 		Map<String, Object> rs = new HashMap<>();
 		rs.put("resultCode", "S-1");
 		rs.put("msg", String.format("총 %d개의 댓글이 있습니다.", articleReplies.size()));
@@ -165,7 +164,7 @@ public class ArticleController {
 		return rs;
 	}
 	
-	@RequestMapping("/article/doArticleReplyModify")
+	@RequestMapping("/usr/article/doArticleReplyModify")
 	@ResponseBody
 	public String doArticleReplyModify(@RequestParam int id, int articleId, String body) {
 		articleService.modifyArticleReplyById(""+id, body);
@@ -182,7 +181,7 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
-	@RequestMapping("/article/doArticleReplyDelete")
+	@RequestMapping("/usr/article/doArticleReplyDelete")
 	@ResponseBody
 	public String doArticleReplyDelete(@RequestParam int articleId, int id) {
 		articleService.deleteArticleReplyById(id);
