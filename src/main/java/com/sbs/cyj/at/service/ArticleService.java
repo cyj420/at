@@ -29,10 +29,10 @@ public class ArticleService {
 		articleDao.delete(id);
 	}
 
-	public long add(Map<String, Object> param) {
+	public int add(Map<String, Object> param) {
 		articleDao.add(param);
 
-		return Util.getAsLong(param.get("id"));
+		return Util.getAsInt(param.get("id"));
 	}
 
 	public Article getArticleById(long id) {
@@ -55,8 +55,9 @@ public class ArticleService {
 		articleDao.deleteArticleReplyById(id);
 	}
 
-	public void writeArticleReply(String articleId, String body) {
-		articleDao.writeArticleReply(articleId, body);
+	public int writeArticleReply(Map<String, Object> param) {
+		articleDao.writeArticleReply(param);
+		return Util.getAsInt(param.get("id"));
 	}
 
 	public List<ArticleReply> getArticleRepliesByArticleId(int id, int from) {

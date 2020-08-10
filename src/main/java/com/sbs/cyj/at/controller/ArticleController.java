@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sbs.cyj.at.dto.Article;
 import com.sbs.cyj.at.dto.ArticleReply;
+import com.sbs.cyj.at.dto.ResultData;
 import com.sbs.cyj.at.service.ArticleService;
 
 @Controller
@@ -78,7 +81,7 @@ public class ArticleController {
 	@RequestMapping("/usr/article/doAdd")
 	@ResponseBody
 	public String doAdd(@RequestParam Map<String, Object> param) {
-		long newId = articleService.add(param);
+		int newId = articleService.add(param);
 
 		String msg = newId + "번 게시물이 추가되었습니다.";
 
@@ -118,38 +121,52 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
-	@RequestMapping("/usr/article/doWriteReply")
-	@ResponseBody
-	public String doArticleReplyWrite(@RequestParam int articleId, String body) {
-		articleService.writeArticleReply(""+articleId, body);
-		String msg = "댓글이 생성되었습니다.";
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("alert('" + msg + "');");
-		sb.append("location.replace('./detail?id=" + articleId + "');");
-
-		sb.insert(0, "<script>");
-		sb.append("</script>");
-
-		return sb.toString();
-	}
+//	@RequestMapping("/usr/article/doWriteReply")
+//	@ResponseBody
+//	public String doArticleReplyWrite(@RequestParam int articleId, String body) {
+//		articleService.writeArticleReply(""+articleId, body);
+//		String msg = "댓글이 생성되었습니다.";
+//
+//		StringBuilder sb = new StringBuilder();
+//
+//		sb.append("alert('" + msg + "');");
+//		sb.append("location.replace('./detail?id=" + articleId + "');");
+//
+//		sb.insert(0, "<script>");
+//		sb.append("</script>");
+//
+//		return sb.toString();
+//	}
+	
+//	@RequestMapping("/usr/article/doWriteReplyAjax")
+//	@ResponseBody
+//	public String doArticleReplyWriteAjax(@RequestParam int articleId, String body) {
+//		articleService.writeArticleReply(""+articleId, body);
+//		String msg = "댓글이 생성되었습니다.";
+//
+//		StringBuilder sb = new StringBuilder();
+//
+//		sb.append("alert('" + msg + "');");
+//		sb.append("location.replace('./detail?id=" + articleId + "');");
+//
+//		sb.insert(0, "<script>");
+//		sb.append("</script>");
+//
+//		return sb.toString();
+//	}
 	
 	@RequestMapping("/usr/article/doWriteReplyAjax")
 	@ResponseBody
-	public String doArticleReplyWriteAjax(@RequestParam int articleId, String body) {
-		articleService.writeArticleReply(""+articleId, body);
-		String msg = "댓글이 생성되었습니다.";
+	public ResultData doWriteReplyAjax(@RequestParam Map<String, Object> param, HttpServletRequest request) {
+		Map<String, Object> rsDataBody = new HashMap<>();
+		param.put("memberId", request.getAttribute("loginedMemberId"));
+		System.out.println("request.getAttribute(\"loginedMemberId\") : " + request.getAttribute("loginedMemberId"));
+		System.out.println("memberId : "+param.get("memberId"));
+		System.out.println("param : "+param.toString());
+		int newArticleReplyId = articleService.writeArticleReply(param);
+		rsDataBody.put("articleReplyId", newArticleReplyId);
 
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("alert('" + msg + "');");
-		sb.append("location.replace('./detail?id=" + articleId + "');");
-
-		sb.insert(0, "<script>");
-		sb.append("</script>");
-
-		return sb.toString();
+		return new ResultData("S-1", String.format("%d번 댓글이 생성되었습니다.", newArticleReplyId), rsDataBody);
 	}
 	
 	@RequestMapping("/usr/article/getForPrintArticleRepliesRs")

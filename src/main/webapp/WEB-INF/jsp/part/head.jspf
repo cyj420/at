@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${logoText}- ${pageTitle}</title>
+<title>${logoText}-${pageTitle}</title>
 
 <!-- 구글 폰트 불러오기 -->
 <!-- rotobo(400/700/900), notosanskr(400/600/900) -->
@@ -24,7 +24,9 @@
 <link rel="stylesheet" href="/resource/common.css" />
 <!-- 공통 JS -->
 <script src="/resource/common.js"></script>
-
+<script>
+var param = ${paramJson};
+</script>
 </head>
 <body>
 	<h1 class="page-title-box con">${pageTitle}</h1>

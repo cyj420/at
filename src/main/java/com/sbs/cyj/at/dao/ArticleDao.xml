@@ -76,6 +76,17 @@
 	WHERE id = #{id}
   </update>
   
+  <insert id="writeArticleReply" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO articleReply
+	SET regDate = NOW(),
+	updateDate = NOW(),
+	body = #{body},
+	memberId = #{memberId},
+	articleId = #{articleId},
+	displayStatus = 1
+  </insert>
+  
+  <!-- 
   <insert id="writeArticleReply" parameterType="String" keyProperty="id">
 	INSERT INTO articleReply
 	SET regDate = NOW(),
@@ -83,6 +94,7 @@
 	memberId = 1,
 	body = #{body}
   </insert>
+   -->
   
   <update id="modifyArticleReplyById" parameterType="String">
 	UPDATE articleReply

@@ -3,15 +3,15 @@ package com.sbs.cyj.at.util;
 import java.math.BigInteger;
 
 public class Util {
-	public static long getAsLong(Object object) {
+	public static int getAsInt(Object object) {
 		if (object instanceof BigInteger) {
-			return ((BigInteger) object).longValue();
+			return ((BigInteger) object).intValue();
 		} else if (object instanceof Long) {
-			return (long) object;
+			return (int) object;
 		} else if (object instanceof Integer) {
-			return (long) object;
+			return (int) object;
 		} else if (object instanceof String) {
-			return Long.parseLong((String) object);
+			return Integer.parseInt((String) object);
 		}
 
 		return -1;

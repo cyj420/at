@@ -29,7 +29,7 @@ public interface ArticleDao {
 
 	void deleteArticleReplyById(int id);
 
-	void writeArticleReply(String articleId, String body);
+	void writeArticleReply(Map<String, Object> param);
 
 	List<ArticleReply> getArticleRepliesByArticleIdFrom(int id, int from);
 }
