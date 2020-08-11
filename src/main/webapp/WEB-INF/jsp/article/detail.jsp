@@ -71,8 +71,7 @@ body, ul, li, h1 {
 	display: none;
 }
 
-.reply-list>table>tbody>tr[data-modify-mode="Y"] .modify-mode-invisible
-	{
+.reply-list>table>tbody>tr[data-modify-mode="Y"] .modify-mode-invisible{
 	display: none;
 }
 
@@ -128,14 +127,13 @@ body, ul, li, h1 {
 							<td><a href="./doDelete?id=${article.id}"
 								onclick="if ( confirm('삭제하시겠습니까?') == false ) { return false; }">삭제</a>
 
-								<a href="./modify?id=${article.id}">수정</a></td>
+								<a href="./modify?id=${article.id}">수정</a>
+							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 
-			
-			
 			<!-- 댓글 -->
 			<c:if test="${isLogined}">
 				<h2 class="reply-write-title con">댓글 작성</h2>
@@ -188,104 +186,7 @@ body, ul, li, h1 {
 				</div>
 			</c:if>
 
-
-
 			<h1 class="reply-list-title con">댓글 목록</h1>
-
-			<%-- 
-			<script>
-		    	var ArticleReply__lastLoadedArticleReplyId = 0;
-			    function ArticleReply__loadList(){
-					$.get(
-						'./getForPrintArticleRepliesRs',
-						{
-							id : ${param.id},
-							from : ArticleReply__lastLoadedArticleReplyId + 1
-						},
-						function(data){
-							for(var i = 0; i<data.articleReplies.length; i++){
-								var articleReply = data.articleReplies[i];
-								ArticleReply__drawReply(articleReply);
-
-								ArticleReply__lastLoadedArticleReplyId = articleReply.id;
-							}
-						},
-						'json'
-					);
-				}
-
-				var ArticleReply__$listTbody;
-				
-				function ArticleReply__drawReply(articleReply){
-					var html = '';
-
-					html = '<tr data-id="'+articleReply.id+'" data-modify-mode="N">';
-					html += '<td>' + articleReply.id + '</td>';
-					html += '<td>' + articleReply.regDate + '</td>';
-					html += '<td>' + articleReply.extra__writer + '</td>';
-					html += '<td class="reply-body-td">';
-					html += '<div class="modify-mode-invisible">' + articleReply.body + '</div>';
-					html += '<div class="modify-mode-visible">';
-					html += '<form action="" onclick="Article__modifyReply(this); return false;">';
-					html += '<input type="hidden" name="id" value="' + articleReply.id + '" />';
-					html += '<input type="hidden" name="articleId" value="' + articleReply.articleId + '" />'; 
-					html += '<textarea maxlength="300" name="body"></textarea>';
-					/* html += '<button onclick="Article__modifyReply(this);">수정완료</button>'; */
-					html += '<input type="submit" value="수정완료" />';
-					html += '</form>';
-					html += '</div>';
-					html += '</td>';
-					html += '<td>';
-					html += '<button onclick="ArticleReplyList__delete(this,'+ articleReply.id+');">삭제</button>';
-					html += '<button onclick="Article__turnOnModifyMode(this);" class="modify-mode-invisible" href="javascript:;">수정</button>';
-					html += '<button onclick="Article__turnOffModifyMode(this);" class="modify-mode-visible" href="javascript:;">취소</button>';
-					/* 
-					html += '<a class="modify-mode-invisible" href="javascript:;" onclick="Article__turnOnModifyMode(this);">수정</a>';
-					html += '<a class="modify-mode-visible" href="javascript:;" onclick="Article__turnOffModifyMode(this);">수정취소</a>'; 
-					*/
-					html += '</td>';
-					html += '</tr>';
-					
-					
-					ArticleReply__$listTbody.prepend(html);
-				}
-				
-				<!-- html이 다 완성된 상태에서 부르기 위한 방법  -->
-				$(function(){
-					ArticleReply__$listTbody = $('.reply-list > table tbody');
-					ArticleReply__loadList();
-					setInterval(ArticleReply__loadList, 1000);
-				});
-
-		    </script>
-
-			
-			<div class="reply-list list con">
-				<table>
-					<colgroup>
-						<col width="50" />
-						<col width="180" />
-						<col width="100" />
-						<col />
-						<col width="100" />
-					</colgroup>
-					<thead>
-						<tr>
-							<th>번호</th>
-							<th>날짜</th>
-							<th>글쓴이</th>
-							<th>내용</th>
-							<th>비고</th>
-						</tr>
-					</thead>
-
-					<tbody>
-					</tbody>
-
-				</table>
-			</div>
-			 --%>
-			
 			
 			<script>
 			function Article__turnOnModifyMode(el) {
@@ -301,14 +202,14 @@ body, ul, li, h1 {
 			  $tr.attr("data-modify-mode", "Y");
 			  $tr.siblings('[data-modify-mode="Y"]').attr("data-modify-mode", "N");
 			}
-			
+
 			function Article__turnOffModifyMode(el) {
 			  var $tr = $(el).closest("tr");
 			  $tr.attr("data-modify-mode", "N");
 			}
 			</script>
 			
-			<!-- 여기부터 댓글 리스트-->
+			<!-- 여기부터 댓글 리스트 -->
 			<div class="reply-list list table-box con">
 				<table>
 					<colgroup>
@@ -341,11 +242,7 @@ body, ul, li, h1 {
 				var ArticleReplyList__submitModifyFormDone = false;
 
 				function ArticleReplyList__submitModifyForm(form) {
-				  /* if (ArticleReplyList__submitModifyFormDone) {
-					alert('처리중입니다.');
-					return;
-				  } */
-				  
+				  form.body.focus();
 				  form.body.value = form.body.value.trim();
 				  if (form.body.value.length == 0) {
 				    alert("내용을 입력해주세요.");
@@ -356,13 +253,6 @@ body, ul, li, h1 {
 				  var id = form.id.value;
 				  var newBody = form.body.value;
 
-				  /* ArticleReplyList__submitModifyFormDone = true; */
-
-				  /* 
-				  var $tr = $(form).closest("tr");
-	  			  $tr.attr("data-modify-mode", "N");
-	  			   */
-				  
 				  $.post('./doModifyReplyAjax',{
 					  id : id,
 					  articleId : param.id,
@@ -371,25 +261,15 @@ body, ul, li, h1 {
 					  if(data.resultCode && data.resultCode.substr(0,2)=='S-'){
 						  var $tr = $('.reply-list tbody > tr[data-id="'+id+'"] .article-reply-body');
 						  $tr.empty().append(body);
+						  Article__turnOffModifyMode(form);
 					  }
 				  }, 'json');
-				}
-				
-				function ArticleReplyList__showModifyFormModal(el){
-					$('html').addClass('article-reply-modify-form-modal-actived');
-					var $tr = $(el).closest('tr');
-					var originBody = $tr.data('data-originBody');
 
-					var id = $tr.attr('data-id');
-
-					var form = $('.article-reply-modify-form-modal form').get(0);
-
-					form.id.value = id;
-					form.body.value = originBody;
-				}
-				
-				function ArticleReplyList__hideModifyFormModal(){
-					$('html').removeClass('article-reply-modify-form-modal-actived');
+				  var $tr = $(form).closest("tr");
+				  $tr
+				    .find(">.reply-body-td>.modify-mode-invisible")
+				    .empty()
+				    .append(newBody);
 				}
 
 				function ArticleReplyList__loadMoreCallback(data){
@@ -406,22 +286,6 @@ body, ul, li, h1 {
 						from : ArticleReplyList__lastLodedId + 1
 					}, ArticleReplyList__loadMoreCallback, 'json');
 				}
-
-
-				/* 
-				function ArticleReplyList__delete(el, id) {
-				  if (confirm(id + "번 댓글을 삭제하시겠습니까?") == false) {
-				    return;
-				  }
-				  var $tr = $(el).closest("tr");
-					$.post('./doDeleteReplyAjax', {
-						id:id
-					},
-					function(){
-						$tr.remove();
-					}, 'json');
-				}
-				*/
 				
 				function ArticleReplyList__delete(el) {
 					if (confirm("해당 댓글을 삭제하시겠습니까?") == false) {
@@ -437,7 +301,6 @@ body, ul, li, h1 {
 					}, 'json');
 				} 
 				
-				
 				function ArticleReplyList__drawReplies(articleReplies) {
 					for ( var i = 0; i < articleReplies.length; i++ ) {
 						var articleReply = articleReplies[i];
@@ -448,7 +311,6 @@ body, ul, li, h1 {
 				function ArticleReplyList__drawReply(articleReply) {
 					var html = '';
 
-					// ajax로 하고 싶어서 이걸로 하는 중...
 					html = '<tr data-id="'+articleReply.id+'" data-modify-mode="N">';
 					html += '<td>' + articleReply.id + '</td>';
 					html += '<td>' + articleReply.regDate + '</td>';
@@ -461,9 +323,9 @@ body, ul, li, h1 {
 					html += '<input type="hidden" name="id" value="' + articleReply.id + '" />';
 					html += '<input type="hidden" name="articleId" value="' + articleReply.articleId + '" />';
 					html += '<textarea maxlength="300" name="body"></textarea>';
-					html += '<button type="submit">수정완료</button>';
+					html += '<button type="submit" onclick="Article__turnOffModifyMode(this);">수정완료</button>';
 					/* 
-					html += '<input type="submit" value="수정완료" />';
+					html += '<button type="submit">수정완료</button>';
 					 */
 					html += '</form>';
 					
@@ -475,41 +337,9 @@ body, ul, li, h1 {
 						html += '<button onclick="Article__turnOnModifyMode(this);" class="modify-mode-invisible" href="javascript:;">수정</button>';
 						html += '<button onclick="Article__turnOffModifyMode(this);" class="modify-mode-visible" href="javascript:;">취소</button>';
 					}
-					/* 
-					html += '<a class="modify-mode-invisible" href="javascript:;" onclick="Article__turnOnModifyMode(this);">수정</a>';
-					html += '<a class="modify-mode-visible" href="javascript:;" onclick="Article__turnOffModifyMode(this);">수정취소</a>'; 
-					*/
 					html += '</td>';
 					html += '</tr>';
 
-					
-					/* 아래 코드로 할 경우 modal로 해야할 듯. 동영상 존재. 
-					html += '<tr data-id="'+articleReply.id+'" data-modify-mode="N">';
-					html += '<td>' + articleReply.id + '</td>';
-					html += '<td>' + articleReply.regDate + '</td>';
-					html += '<td>' + articleReply.extra.writer + '</td>';
-
-					html += '<td class="reply-body-td">';
-					html += '<div class="modify-mode-invisible article-reply-body">' + articleReply.body + '</div>';
-					html += '<div class="modify-mode-visible">';
-					html += '<form action="" onclick="Article__modifyReply(this); return false;">';
-					html += '<input type="hidden" name="id" value="' + articleReply.id + '" />';
-					html += '<input type="hidden" name="articleId" value="' + articleReply.articleId + '" />'; 
-					html += '<textarea maxlength="300" name="body"></textarea>';
-					html += '<button onclick="Article__modifyReply(this);">수정완료</button>';
-					html += '<input type="submit" value="수정완료" />';
-					html += '</form>';
-					html += '</div>';
-					html += '</td>';
-					html += '<td>';
-					if (articleReply.extra.actorCanDelete) {
-						html += '<button type="button" onclick="ArticleReplyList__delete(this);">삭제</button>';
-						html += '<button class="article-reply-modify-form-modal" type="button" onclick="ArticleReplyList__showModifyFormModal(this);">수정</button>';
-					}
-					html += '</td>';
-					html += '</tr>';
-					*/
-					
 					var $tr = $(html);
 					$tr.data('data-originBody', articleReply.body);
 					ArticleReplyList__$tbody.prepend($tr);
@@ -517,7 +347,7 @@ body, ul, li, h1 {
 				
 				ArticleReplyList__loadMore();
 			</script>
-			<!-- 여기까지 -->
+			<!-- 여기까지 댓글 리스트 -->
 
 			<!-- 이전글 / 다음글 -->
 			<div class="another-article">
