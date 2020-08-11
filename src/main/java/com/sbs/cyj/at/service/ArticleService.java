@@ -5,10 +5,12 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sbs.cyj.at.dao.ArticleDao;
 import com.sbs.cyj.at.dto.Article;
 import com.sbs.cyj.at.dto.ArticleReply;
+import com.sbs.cyj.at.dto.Member;
 import com.sbs.cyj.at.util.Util;
 
 //@Component
@@ -43,10 +45,6 @@ public class ArticleService {
 		articleDao.modify(param);
 	}
 
-	public List<ArticleReply> getArticleRepliesByArticleId(int id) {
-		return articleDao.getArticleRepliesByArticleId(id);
-	}
-
 	public void modifyArticleReplyById(String id, String body) {
 		articleDao.modifyArticleReplyById(id, body);
 	}
@@ -60,8 +58,33 @@ public class ArticleService {
 		return Util.getAsInt(param.get("id"));
 	}
 
-	public List<ArticleReply> getArticleRepliesByArticleId(int id, int from) {
-		return articleDao.getArticleRepliesByArticleIdFrom(id, from);
+	public List<ArticleReply> getForPrintArticleReplies(@RequestParam Map<String, Object> param) {
+		List<ArticleReply> articleReplies = articleDao.getForPrintArticleReplies(param);
+
+		Member actor = (Member)param.get("actor");
+
+		for ( ArticleReply articleReply : articleReplies ) {
+			// 출력용 부가데이터를 추가한다.
+			updateForPrintInfo(actor, articleReply);
+		}
+
+		return articleReplies;
 	}
+
+	private void updateForPrintInfo(Member actor, ArticleReply articleReply) {
+		articleReply.getExtra().put("actorCanDelete", actorCanDelete(actor, articleReply));
+		articleReply.getExtra().put("actorCanUpdate", actorCanUpdate(actor, articleReply));
+	}
+
+	// 액터가 해당 댓글을 수정할 수 있는지 알려준다.
+	private Object actorCanUpdate(Member actor, ArticleReply articleReply) {
+		return actor != null && actor.getId() == articleReply.getMemberId() ? true : false;
+	}
+
+	// 액터가 해당 댓글을 삭제할 수 있는지 알려준다.
+	private Object actorCanDelete(Member actor, ArticleReply articleReply) {
+		return actorCanUpdate(actor, articleReply);
+	}
+
 }
 

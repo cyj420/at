@@ -89,41 +89,6 @@ body, ul, li, h1 {
 	display: block;
 }
 </style>
-<script>
-
-	/* function Article__writeReply(form) {
-	  form.body.value = form.body.value.trim();
-
-	  if (form.body.value.length == 0) {
-	    form.body.focus();
-	    alert("내용을 입력해주세요.");
-	    return false;
-	  }
-	  var $form = $(form);
-
-	  $form.find('input[type="submit"]').val("작성중...");
-	  $form.find('input[type="submit"]').prop("disabled", true);
-	  $form.find('input[type="reset"]').prop("disabled", true);
-	} */
-	
-	function Article__deleteReply(el, id) {
-	  if (confirm(id + "번 댓글을 삭제하시겠습니까?") == false) {
-	    return;
-	  }
-	  var $tr = $(el).closest("tr");
-
-		$.post(
-			  './doDeleteReplyAjax',
-			  {
-				  id:id
-			},
-			function(){
-				$tr.remove();
-			},
-			'json'
-		);
-	}
-</script>
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -169,72 +134,7 @@ body, ul, li, h1 {
 				</table>
 			</div>
 
-			<script>
-			function Article__modifyReply(form) {
-			  form.body.value = form.body.value.trim();
-			  if (form.body.value.length == 0) {
-			    form.body.focus();
-			    alert("내용을 입력해주세요.");
-			    return;
-			  }
-			  var $tr = $(form).closest("tr");
-			  $tr.attr("data-modify-mode", "N");
-
-			  var newBody = form.body.value;
-			  var id = form.id.value;
-
-			  $.post('./doArticleReplyModifyAjax',{
-				  id : id,
-				  articleId : param.id,
-				  body : newBody
-			  }, function(data){
-				  alert(data.msg);
-			  }, 'json');
-			  // 임시 테스트용
-			  $tr
-			    .find(">.reply-body-td>.modify-mode-invisible")
-			    .empty()
-			    .append(newBody);
-			}
-
-/* 			function Article__deleteReply(el, id) {
-				  if (confirm(id + "번 댓글을 삭제하시겠습니까?") == false) {
-				    return;
-				  }
-				  var $tr = $(el).closest("tr");
-
-					$.post(
-						  './doDeleteReplyAjax',
-						  {
-							  id:id
-						},
-						function(){
-							$tr.remove();
-						},
-						'json'
-					);
-				} */
-
-
-			function Article__turnOnModifyMode(el) {
-			  var $tr = $(el).closest("tr");
-
-			  var body = $tr
-			    .find(">.reply-body-td>.modify-mode-invisible")
-			    .html()
-			    .trim();
-
-			  $tr.find(">.reply-body-td>.modify-mode-visible>form>textarea").val(body);
-
-			  $tr.attr("data-modify-mode", "Y");
-			  $tr.siblings('[data-modify-mode="Y"]').attr("data-modify-mode", "N");
-			}
 			
-			function Article__turnOffModifyMode(el) {
-			  var $tr = $(el).closest("tr");
-			  $tr.attr("data-modify-mode", "N");
-			}
-			</script>
 			
 			<!-- 댓글 -->
 			<c:if test="${isLogined}">
@@ -292,6 +192,7 @@ body, ul, li, h1 {
 
 			<h1 class="reply-list-title con">댓글 목록</h1>
 
+			<%-- 
 			<script>
 		    	var ArticleReply__lastLoadedArticleReplyId = 0;
 			    function ArticleReply__loadList(){
@@ -335,7 +236,7 @@ body, ul, li, h1 {
 					html += '</div>';
 					html += '</td>';
 					html += '<td>';
-					html += '<button onclick="Article__deleteReply(this,'+ articleReply.id+');">삭제</button>';
+					html += '<button onclick="ArticleReplyList__delete(this,'+ articleReply.id+');">삭제</button>';
 					html += '<button onclick="Article__turnOnModifyMode(this);" class="modify-mode-invisible" href="javascript:;">수정</button>';
 					html += '<button onclick="Article__turnOffModifyMode(this);" class="modify-mode-visible" href="javascript:;">취소</button>';
 					/* 
@@ -358,6 +259,7 @@ body, ul, li, h1 {
 
 		    </script>
 
+			
 			<div class="reply-list list con">
 				<table>
 					<colgroup>
@@ -382,6 +284,240 @@ body, ul, li, h1 {
 
 				</table>
 			</div>
+			 --%>
+			
+			
+			<script>
+			function Article__turnOnModifyMode(el) {
+			  var $tr = $(el).closest("tr");
+
+			  var body = $tr
+			    .find(">.reply-body-td>.modify-mode-invisible")
+			    .html()
+			    .trim();
+
+			  $tr.find(">.reply-body-td>.modify-mode-visible>form>textarea").val(body);
+
+			  $tr.attr("data-modify-mode", "Y");
+			  $tr.siblings('[data-modify-mode="Y"]').attr("data-modify-mode", "N");
+			}
+			
+			function Article__turnOffModifyMode(el) {
+			  var $tr = $(el).closest("tr");
+			  $tr.attr("data-modify-mode", "N");
+			}
+			</script>
+			
+			<!-- 여기부터 댓글 리스트-->
+			<div class="reply-list list table-box con">
+				<table>
+					<colgroup>
+						<col width="80">
+						<col width="180">
+						<col width="180">
+						<col>
+						<col width="200">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>번호</th>
+							<th>날짜</th>
+							<th>작성자</th>
+							<th>내용</th>
+							<th>비고</th>
+						</tr>
+					</thead>
+					<tbody>
+			
+					</tbody>
+				</table>
+			</div>
+			
+			<script>
+				var ArticleReplyList__$box = $('.reply-list');
+				var ArticleReplyList__$tbody = ArticleReplyList__$box.find('tbody');
+				var ArticleReplyList__lastLodedId = 0;
+
+				var ArticleReplyList__submitModifyFormDone = false;
+
+				function ArticleReplyList__submitModifyForm(form) {
+				  /* if (ArticleReplyList__submitModifyFormDone) {
+					alert('처리중입니다.');
+					return;
+				  } */
+				  
+				  form.body.value = form.body.value.trim();
+				  if (form.body.value.length == 0) {
+				    alert("내용을 입력해주세요.");
+				    form.body.focus();
+				    return;
+				  }
+
+				  var id = form.id.value;
+				  var newBody = form.body.value;
+
+				  /* ArticleReplyList__submitModifyFormDone = true; */
+
+				  /* 
+				  var $tr = $(form).closest("tr");
+	  			  $tr.attr("data-modify-mode", "N");
+	  			   */
+				  
+				  $.post('./doModifyReplyAjax',{
+					  id : id,
+					  articleId : param.id,
+					  body : newBody
+				  }, function(data){
+					  if(data.resultCode && data.resultCode.substr(0,2)=='S-'){
+						  var $tr = $('.reply-list tbody > tr[data-id="'+id+'"] .article-reply-body');
+						  $tr.empty().append(body);
+					  }
+				  }, 'json');
+				}
+				
+				function ArticleReplyList__showModifyFormModal(el){
+					$('html').addClass('article-reply-modify-form-modal-actived');
+					var $tr = $(el).closest('tr');
+					var originBody = $tr.data('data-originBody');
+
+					var id = $tr.attr('data-id');
+
+					var form = $('.article-reply-modify-form-modal form').get(0);
+
+					form.id.value = id;
+					form.body.value = originBody;
+				}
+				
+				function ArticleReplyList__hideModifyFormModal(){
+					$('html').removeClass('article-reply-modify-form-modal-actived');
+				}
+
+				function ArticleReplyList__loadMoreCallback(data){
+					if ( data.body.articleReplies && data.body.articleReplies.length > 0 ) {
+						ArticleReplyList__lastLodedId = data.body.articleReplies[data.body.articleReplies.length - 1].id;
+						ArticleReplyList__drawReplies(data.body.articleReplies);
+					}
+					setTimeout(ArticleReplyList__loadMore, 2000);
+				}
+				
+				function ArticleReplyList__loadMore() {
+					$.get('getForPrintArticleReplies', {
+						articleId : param.id,
+						from : ArticleReplyList__lastLodedId + 1
+					}, ArticleReplyList__loadMoreCallback, 'json');
+				}
+
+
+				/* 
+				function ArticleReplyList__delete(el, id) {
+				  if (confirm(id + "번 댓글을 삭제하시겠습니까?") == false) {
+				    return;
+				  }
+				  var $tr = $(el).closest("tr");
+					$.post('./doDeleteReplyAjax', {
+						id:id
+					},
+					function(){
+						$tr.remove();
+					}, 'json');
+				}
+				*/
+				
+				function ArticleReplyList__delete(el) {
+					if (confirm("해당 댓글을 삭제하시겠습니까?") == false) {
+				    	return;
+					}
+					var $tr = $(el).closest('tr');
+					var id = $tr.attr('data-id');	//왜 이걸로는 찾을 수 없었던 걸까... > data-id="" 이런 형태여야 하는데 '='을 안 붙였음.
+					
+					$.post('./doDeleteReplyAjax',{
+						id : id
+					}, function(data){
+						$tr.remove();
+					}, 'json');
+				} 
+				
+				
+				function ArticleReplyList__drawReplies(articleReplies) {
+					for ( var i = 0; i < articleReplies.length; i++ ) {
+						var articleReply = articleReplies[i];
+						ArticleReplyList__drawReply(articleReply);
+					}
+				}
+				
+				function ArticleReplyList__drawReply(articleReply) {
+					var html = '';
+
+					// ajax로 하고 싶어서 이걸로 하는 중...
+					html = '<tr data-id="'+articleReply.id+'" data-modify-mode="N">';
+					html += '<td>' + articleReply.id + '</td>';
+					html += '<td>' + articleReply.regDate + '</td>';
+					html += '<td>' + articleReply.extra.writer + '</td>';
+					html += '<td class="reply-body-td">';
+					html += '<div class="modify-mode-invisible">' + articleReply.body + '</div>';
+					html += '<div class="modify-mode-visible">';
+
+					html += '<form action="" onclick="ArticleReplyList__submitModifyForm(this); return false;">';
+					html += '<input type="hidden" name="id" value="' + articleReply.id + '" />';
+					html += '<input type="hidden" name="articleId" value="' + articleReply.articleId + '" />';
+					html += '<textarea maxlength="300" name="body"></textarea>';
+					html += '<button type="submit">수정완료</button>';
+					/* 
+					html += '<input type="submit" value="수정완료" />';
+					 */
+					html += '</form>';
+					
+					html += '</div>';
+					html += '</td>';
+					html += '<td>';
+					if (articleReply.extra.actorCanDelete) {
+					html += '<button onclick="ArticleReplyList__delete(this,'+ articleReply.id+');">삭제</button>';
+						html += '<button onclick="Article__turnOnModifyMode(this);" class="modify-mode-invisible" href="javascript:;">수정</button>';
+						html += '<button onclick="Article__turnOffModifyMode(this);" class="modify-mode-visible" href="javascript:;">취소</button>';
+					}
+					/* 
+					html += '<a class="modify-mode-invisible" href="javascript:;" onclick="Article__turnOnModifyMode(this);">수정</a>';
+					html += '<a class="modify-mode-visible" href="javascript:;" onclick="Article__turnOffModifyMode(this);">수정취소</a>'; 
+					*/
+					html += '</td>';
+					html += '</tr>';
+
+					
+					/* 아래 코드로 할 경우 modal로 해야할 듯. 동영상 존재. 
+					html += '<tr data-id="'+articleReply.id+'" data-modify-mode="N">';
+					html += '<td>' + articleReply.id + '</td>';
+					html += '<td>' + articleReply.regDate + '</td>';
+					html += '<td>' + articleReply.extra.writer + '</td>';
+
+					html += '<td class="reply-body-td">';
+					html += '<div class="modify-mode-invisible article-reply-body">' + articleReply.body + '</div>';
+					html += '<div class="modify-mode-visible">';
+					html += '<form action="" onclick="Article__modifyReply(this); return false;">';
+					html += '<input type="hidden" name="id" value="' + articleReply.id + '" />';
+					html += '<input type="hidden" name="articleId" value="' + articleReply.articleId + '" />'; 
+					html += '<textarea maxlength="300" name="body"></textarea>';
+					html += '<button onclick="Article__modifyReply(this);">수정완료</button>';
+					html += '<input type="submit" value="수정완료" />';
+					html += '</form>';
+					html += '</div>';
+					html += '</td>';
+					html += '<td>';
+					if (articleReply.extra.actorCanDelete) {
+						html += '<button type="button" onclick="ArticleReplyList__delete(this);">삭제</button>';
+						html += '<button class="article-reply-modify-form-modal" type="button" onclick="ArticleReplyList__showModifyFormModal(this);">수정</button>';
+					}
+					html += '</td>';
+					html += '</tr>';
+					*/
+					
+					var $tr = $(html);
+					$tr.data('data-originBody', articleReply.body);
+					ArticleReplyList__$tbody.prepend($tr);
+				}
+				
+				ArticleReplyList__loadMore();
+			</script>
+			<!-- 여기까지 -->
 
 			<!-- 이전글 / 다음글 -->
 			<div class="another-article">

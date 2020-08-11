@@ -1,6 +1,7 @@
 package com.sbs.cyj.at.util;
 
 import java.math.BigInteger;
+import java.util.Map;
 
 public class Util {
 	public static int getAsInt(Object object) {
@@ -15,5 +16,11 @@ public class Util {
 		}
 
 		return -1;
+	}
+
+	public static void changeMapKey(Map<String, Object> param, String oldKey, String newKey) {
+		Object value = param.get(oldKey);
+		param.remove(oldKey);
+		param.put(newKey, value);
 	}
 }

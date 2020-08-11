@@ -45,29 +45,6 @@
 	WHERE id = #{id}
   </select>
   
-  <select id="getArticleRepliesByArticleId" parameterType="int" resultType="ArticleReply">
-	<![CDATA[
-	SELECT AR.*, 
-	M.name AS extra__writer
-	FROM articleReply AS AR
-	INNER JOIN `member` AS M
-	ON AR.memberId = M.id
-	WHERE AR.articleId = #{id}
-	AND AR.displayStatus = 1
-	ORDER BY AR.id DESC
-	]]>
-  </select>
-  
-  <select id="getArticleRepliesByArticleIdFrom" parameterType="int" resultType="ArticleReply">
-  	SELECT AR.*, M.name AS extra__writer
-	FROM articleReply AS AR
-	INNER JOIN `member` AS M
-	ON AR.memberId = M.id
-	WHERE AR.articleId = #{id}
-  	AND displayStatus = 1
-  	AND AR.id >= #{from}
-  </select>
-  
   <update id="modify" parameterType="map">
 	UPDATE article
 	SET title = #{title},
@@ -86,19 +63,10 @@
 	displayStatus = 1
   </insert>
   
-  <!-- 
-  <insert id="writeArticleReply" parameterType="String" keyProperty="id">
-	INSERT INTO articleReply
-	SET regDate = NOW(),
-	articleId = #{articleId},
-	memberId = 1,
-	body = #{body}
-  </insert>
-   -->
-  
   <update id="modifyArticleReplyById" parameterType="String">
 	UPDATE articleReply
-	SET body = #{body}
+	SET body = #{body},
+	updateDate = NOW()
 	WHERE id = #{id}
   </update>
   
@@ -106,6 +74,7 @@
   	UPDATE articleReply
 	SET displayStatus = 0,
 	delDate = NOW(),
+	updateDate = NOW(),
 	delStatus = 1
 	WHERE id = #{id}
   </update>
@@ -124,5 +93,18 @@
 	</association>
   </resultMap>
   
+  <select id="getForPrintArticleReplies" resultMap="articleReply">
+    <![CDATA[
+	SELECT AR.*,
+	M.nickname AS extra__writer
+	FROM articleReply AS AR
+	INNER JOIN member AS M
+	ON AR.memberId = M.id
+	WHERE AR.articleId = #{articleId}
+	AND AR.displayStatus = 1
+	AND AR.id >= #{from}
+	ORDER BY AR.id ASC
+	]]>
+  </select>
   
 </mapper>

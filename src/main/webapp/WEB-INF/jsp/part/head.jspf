@@ -20,10 +20,6 @@
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<!-- 공통 CSS -->
-<link rel="stylesheet" href="/resource/common.css" />
-<!-- 공통 JS -->
-<script src="/resource/common.js"></script>
 <script>
 var param = ${paramJson};
 </script>
