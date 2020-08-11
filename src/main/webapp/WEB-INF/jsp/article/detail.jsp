@@ -140,7 +140,7 @@ body, ul, li, h1 {
 				<div class="reply-write con">
 
 					<script>
-					    function ArticleReply__submitWriteForm(form){
+					    function Reply__submitWriteForm(form){
 						    form.body.value = form.body.value.trim();
 						    if(form.body.value.length == 0){
 							    alert('내용을 입력하세요.');
@@ -148,7 +148,7 @@ body, ul, li, h1 {
 							    return;
 							}
 							$.post('./doWriteReplyAjax', {
-								articleId : param.id,
+								relId : param.id,
 								body : form.body.value
 							}, function(data){
 								alert(data.msg);
@@ -159,7 +159,7 @@ body, ul, li, h1 {
 				    </script>
 
 					<form action=""
-						onsubmit="ArticleReply__submitWriteForm(this); return false;">
+						onsubmit="Reply__submitWriteForm(this); return false;">
 						<table>
 							<colgroup>
 								<col width="100" />
@@ -188,27 +188,6 @@ body, ul, li, h1 {
 
 			<h1 class="reply-list-title con">댓글 목록</h1>
 			
-			<script>
-			function Article__turnOnModifyMode(el) {
-			  var $tr = $(el).closest("tr");
-
-			  var body = $tr
-			    .find(">.reply-body-td>.modify-mode-invisible")
-			    .html()
-			    .trim();
-
-			  $tr.find(">.reply-body-td>.modify-mode-visible>form>textarea").val(body);
-
-			  $tr.attr("data-modify-mode", "Y");
-			  $tr.siblings('[data-modify-mode="Y"]').attr("data-modify-mode", "N");
-			}
-
-			function Article__turnOffModifyMode(el) {
-			  var $tr = $(el).closest("tr");
-			  $tr.attr("data-modify-mode", "N");
-			}
-			</script>
-			
 			<!-- 여기부터 댓글 리스트 -->
 			<div class="reply-list list table-box con">
 				<table>
@@ -235,14 +214,37 @@ body, ul, li, h1 {
 			</div>
 			
 			<script>
-				var ArticleReplyList__$box = $('.reply-list');
-				var ArticleReplyList__$tbody = ArticleReplyList__$box.find('tbody');
-				var ArticleReplyList__lastLodedId = 0;
+				function Article__turnOnModifyMode(el) {
+				  var $tr = $(el).closest("tr");
 
-				var ArticleReplyList__submitModifyFormDone = false;
+				  var body = $tr
+				    .find(">.reply-body-td>.modify-mode-invisible")
+				    .html()
+				    .trim();
 
-				function ArticleReplyList__submitModifyForm(form) {
-				  form.body.focus();
+				  $tr.find(">.reply-body-td>.modify-mode-visible>form>textarea").val(body);
+
+				  $tr.attr("data-modify-mode", "Y");
+				  $tr.siblings('[data-modify-mode="Y"]').attr("data-modify-mode", "N");
+				}
+
+				function Article__turnOffModifyMode(el) {
+				  var $tr = $(el).closest("tr");
+				  $tr.attr("data-modify-mode", "N");
+				}
+				
+				var ReplyList__$box = $('.reply-list');
+				var ReplyList__$tbody = ReplyList__$box.find('tbody');
+				var ReplyList__lastLodedId = 0;
+
+				/* var ReplyList__submitModifyFormDone = false; */
+
+				function ReplyList__submitModifyForm(form) {
+				  /* if(ReplyList__submitModifyFormDone){
+					  alert("처리중입니다.");
+					  return;
+				  } */
+				  
 				  form.body.value = form.body.value.trim();
 				  if (form.body.value.length == 0) {
 				    alert("내용을 입력해주세요.");
@@ -253,9 +255,10 @@ body, ul, li, h1 {
 				  var id = form.id.value;
 				  var newBody = form.body.value;
 
+				  /* ReplyList__submitModifyFormDone = true; */
+				  
 				  $.post('./doModifyReplyAjax',{
 					  id : id,
-					  articleId : param.id,
 					  body : newBody
 				  }, function(data){
 					  if(data.resultCode && data.resultCode.substr(0,2)=='S-'){
@@ -264,7 +267,6 @@ body, ul, li, h1 {
 						  Article__turnOffModifyMode(form);
 					  }
 				  }, 'json');
-
 				  var $tr = $(form).closest("tr");
 				  $tr
 				    .find(">.reply-body-td>.modify-mode-invisible")
@@ -272,27 +274,27 @@ body, ul, li, h1 {
 				    .append(newBody);
 				}
 
-				function ArticleReplyList__loadMoreCallback(data){
-					if ( data.body.articleReplies && data.body.articleReplies.length > 0 ) {
-						ArticleReplyList__lastLodedId = data.body.articleReplies[data.body.articleReplies.length - 1].id;
-						ArticleReplyList__drawReplies(data.body.articleReplies);
+				function ReplyList__loadMoreCallback(data){
+					if ( data.body.replies && data.body.replies.length > 0 ) {
+						ReplyList__lastLodedId = data.body.replies[data.body.replies.length - 1].id;
+						ReplyList__drawReplies(data.body.replies);
 					}
-					setTimeout(ArticleReplyList__loadMore, 2000);
+					setTimeout(ReplyList__loadMore, 2000);
 				}
 				
-				function ArticleReplyList__loadMore() {
-					$.get('getForPrintArticleReplies', {
+				function ReplyList__loadMore() {
+					$.get('getForPrintReplies', {
 						articleId : param.id,
-						from : ArticleReplyList__lastLodedId + 1
-					}, ArticleReplyList__loadMoreCallback, 'json');
+						from : ReplyList__lastLodedId + 1
+					}, ReplyList__loadMoreCallback, 'json');
 				}
 				
-				function ArticleReplyList__delete(el) {
+				function ReplyList__delete(el) {
 					if (confirm("해당 댓글을 삭제하시겠습니까?") == false) {
 				    	return;
 					}
 					var $tr = $(el).closest('tr');
-					var id = $tr.attr('data-id');	//왜 이걸로는 찾을 수 없었던 걸까... > data-id="" 이런 형태여야 하는데 '='을 안 붙였음.
+					var id = $tr.attr('data-id');	//못 찾았던 이유 > data-id="" 이런 형태여야 하는데 '='을 안 붙였음.
 					
 					$.post('./doDeleteReplyAjax',{
 						id : id
@@ -301,39 +303,35 @@ body, ul, li, h1 {
 					}, 'json');
 				} 
 				
-				function ArticleReplyList__drawReplies(articleReplies) {
-					for ( var i = 0; i < articleReplies.length; i++ ) {
-						var articleReply = articleReplies[i];
-						ArticleReplyList__drawReply(articleReply);
+				function ReplyList__drawReplies(replies) {
+					for ( var i = 0; i < replies.length; i++ ) {
+						var Reply = replies[i];
+						ReplyList__drawReply(Reply);
 					}
 				}
 				
-				function ArticleReplyList__drawReply(articleReply) {
+				function ReplyList__drawReply(Reply) {
 					var html = '';
 
-					html = '<tr data-id="'+articleReply.id+'" data-modify-mode="N">';
-					html += '<td>' + articleReply.id + '</td>';
-					html += '<td>' + articleReply.regDate + '</td>';
-					html += '<td>' + articleReply.extra.writer + '</td>';
+					html = '<tr data-id="'+Reply.id+'" data-modify-mode="N">';
+					html += '<td>' + Reply.id + '</td>';
+					html += '<td>' + Reply.regDate + '</td>';
+					html += '<td>' + Reply.extra.writer + '</td>';
 					html += '<td class="reply-body-td">';
-					html += '<div class="modify-mode-invisible">' + articleReply.body + '</div>';
+					html += '<div class="modify-mode-invisible">' + Reply.body + '</div>';
 					html += '<div class="modify-mode-visible">';
 
-					html += '<form action="" onclick="ArticleReplyList__submitModifyForm(this); return false;">';
-					html += '<input type="hidden" name="id" value="' + articleReply.id + '" />';
-					html += '<input type="hidden" name="articleId" value="' + articleReply.articleId + '" />';
+					html += '<form action="" onclick="ReplyList__submitModifyForm(this); return false;">';
+					html += '<input type="hidden" name="id" value="' + Reply.id + '" />';
 					html += '<textarea maxlength="300" name="body"></textarea>';
 					html += '<button type="submit" onclick="Article__turnOffModifyMode(this);">수정완료</button>';
-					/* 
-					html += '<button type="submit">수정완료</button>';
-					 */
 					html += '</form>';
 					
 					html += '</div>';
 					html += '</td>';
 					html += '<td>';
-					if (articleReply.extra.actorCanDelete) {
-					html += '<button onclick="ArticleReplyList__delete(this,'+ articleReply.id+');">삭제</button>';
+					if (Reply.extra.actorCanDelete) {
+					html += '<button onclick="ReplyList__delete(this,'+ Reply.id+');">삭제</button>';
 						html += '<button onclick="Article__turnOnModifyMode(this);" class="modify-mode-invisible" href="javascript:;">수정</button>';
 						html += '<button onclick="Article__turnOffModifyMode(this);" class="modify-mode-visible" href="javascript:;">취소</button>';
 					}
@@ -341,11 +339,11 @@ body, ul, li, h1 {
 					html += '</tr>';
 
 					var $tr = $(html);
-					$tr.data('data-originBody', articleReply.body);
-					ArticleReplyList__$tbody.prepend($tr);
+					$tr.data('data-originBody', Reply.body);
+					ReplyList__$tbody.prepend($tr);
 				}
 				
-				ArticleReplyList__loadMore();
+				ReplyList__loadMore();
 			</script>
 			<!-- 여기까지 댓글 리스트 -->
 

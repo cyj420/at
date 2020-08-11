@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.sbs.cyj.at.dto.Article;
-import com.sbs.cyj.at.dto.ArticleReply;
+import com.sbs.cyj.at.dto.Reply;
 
 @Mapper
 public interface ArticleDao {
@@ -22,11 +22,13 @@ public interface ArticleDao {
 
 	void modify(Map<String, Object> param);
 
-	void modifyArticleReplyById(String id, String body);
+	void modifyReplyById(String id, String body);
 
-	void deleteArticleReplyById(int id);
+	void deleteReplyById(int id);
 
-	void writeArticleReply(Map<String, Object> param);
+	void writeReply(Map<String, Object> param);
 
-	List<ArticleReply> getForPrintArticleReplies(Map<String, Object> param);
+	List<Reply> getForPrintReplies(Map<String, Object> param);
+
+	Reply getReplyById(int id);
 }
