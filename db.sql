@@ -1,79 +1,42 @@
-/*
-SQLyog Community v13.1.6 (64 bit)
-MySQL - 10.4.11-MariaDB : Database - at
-*********************************************************************
-*/
-
-/*!40101 SET NAMES utf8 */;
-
-/*!40101 SET SQL_MODE=''*/;
-
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`at` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-
+# DB 세팅
+DROP DATABASE IF EXISTS `at`;
+CREATE DATABASE `at`;
 USE `at`;
 
-/*Table structure for table `article` */
-
-DROP TABLE IF EXISTS `article`;
-
-CREATE TABLE `article` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `regDate` datetime NOT NULL,
-  `updateDate` datetime NOT NULL,
-  `delDate` datetime DEFAULT NULL,
-  `delStatus` tinyint(1) unsigned NOT NULL DEFAULT 0,
-  `displayStatus` tinyint(1) unsigned NOT NULL DEFAULT 0,
-  `title` char(200) NOT NULL,
-  `body` longtext NOT NULL,
-  `memberId` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
-
-/*Table structure for table `articleReply` */
-
-DROP TABLE IF EXISTS `articleReply`;
-
-CREATE TABLE `articleReply` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `regDate` datetime DEFAULT NULL,
-  `articleId` int(10) unsigned NOT NULL,
-  `memberId` int(10) unsigned NOT NULL,
-  `body` char(200) NOT NULL,
-  `displayStatus` tinyint(1) unsigned NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
-
-
-CREATE TABLE `member` (
-  id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  regDate DATETIME NOT NULL,
-  updateDate DATETIME,
-  loginId CHAR(50) NOT NULL,
-  loginPw CHAR(120) NOT NULL,
-  `name` CHAR(50) NOT NULL,
-  nickname CHAR(50) NOT NULL
+# article 테이블 세팅
+CREATE TABLE article (
+    id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    regDate DATETIME,
+    updateDate DATETIME,
+    delDate DATETIME,
+	delStatus TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+	displayStatus TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    title CHAR(200) NOT NULL,
+    `body` LONGTEXT NOT NULL
 );
 
-INSERT INTO `member`
+# article 테이블에 테스트 데이터 삽입
+INSERT INTO article
 SET regDate = NOW(),
 updateDate = NOW(),
-loginId = 'admin',
-loginPw = 'admin',
-`name` = 'ad',
-nickname = '관리자'
+title = '제목1',
+`body` = '내용1';
 
+INSERT INTO article
+SET regDate = NOW(),
+updateDate = NOW(),
+title = '제목2',
+`body` = '내용2',
+displayStatus = 1;
 
-ALTER TABLE article
-ADD memberId INT(10) UNSIGNED NOT NULL
+INSERT INTO article
+SET regDate = NOW(),
+updateDate = NOW(),
+title = '제목3',
+`body` = '내용3',
+displayStatus = 1;
 
-===============================0810============================
-
-DROP TABLE `member`
-	
+# member 테이블 세팅
 CREATE TABLE `member` (
     id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     regDate DATETIME,
@@ -98,4 +61,60 @@ loginPw = SHA2('admin', 256),
 `name` = '관리자',
 `nickname` = '관리자',
 `email` = '',
-`phoneNo` = ''; 
+`phoneNo` = '';
+
+
+# article 테이블 세팅
+CREATE TABLE articleReply (
+    id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    regDate DATETIME,
+    updateDate DATETIME,
+    memberId INT(10) UNSIGNED NOT NULL,
+    articleId INT(10) UNSIGNED NOT NULL,
+    delDate DATETIME,
+	delStatus TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+	displayStatus TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `body` LONGTEXT NOT NULL
+);
+
+# articleReply 테이블에 테스트 데이터 삽입
+INSERT INTO articleReply
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 1,
+articleId = 1,
+displayStatus = 1,
+`body` = '내용1';
+
+/* 게시물 댓글을 범용 댓글 테이블로 변경 */
+RENAME TABLE `articleReply` TO `reply`;
+
+ALTER TABLE `reply` ADD COLUMN `relTypeCode` CHAR(50) NOT NULL AFTER `memberId`,
+CHANGE `articleId` `relId` INT(10) UNSIGNED NOT NULL;
+ALTER TABLE `at`.`reply` ADD INDEX (`relId`, `relTypeCode`);
+UPDATE reply
+SET relTypeCode = 'article'
+WHERE relTypeCode = '';
+
+/* 파일 테이블 생성 */
+CREATE TABLE `file` (
+    id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    regDate DATETIME,
+    updateDate DATETIME,
+    delDate DATETIME,
+	delStatus TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+	relTypeCode CHAR(50) NOT NULL,
+	relId INT(10) UNSIGNED NOT NULL,
+    originFileName VARCHAR(100) NOT NULL,
+    fileExt CHAR(10) NOT NULL,
+    typeCode CHAR(20) NOT NULL,
+    type2Code CHAR(20) NOT NULL,
+    fileSize INT(10) UNSIGNED NOT NULL,
+    fileExtTypeCode CHAR(10) NOT NULL,
+    fileExtType2Code CHAR(10) NOT NULL,
+    fileNo TINYINT(2) UNSIGNED NOT NULL,
+    `body` LONGBLOB
+);
+
+# 멤버 테이블 칼럼명 변경
+ALTER TABLE `member` CHANGE `phoneNo` `cellphoneNo` CHAR(20) NOT NULL; 

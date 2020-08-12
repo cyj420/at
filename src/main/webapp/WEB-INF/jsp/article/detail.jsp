@@ -150,15 +150,16 @@ body, ul, li, h1 {
 
 						    /* 파일 업로드 기능 추가하면서 변경된 코드 시작 */
 							var startUploadFiles = function(onSuccess) {
-								var fileUploadFormData = new FormData(form);
-
-								if ( form.file__reply__0__common__attachment__1.value.length == 0 ) {
+								if ( form.file__reply__0__common__attachment__1.value.length == 0 && form.file__reply__0__common__attachment__2.value.length == 0 ) {
 									onSuccess();
 									return;
 								} 
-								
+
+								var fileUploadFormData = new FormData(form); 
 								fileUploadFormData.delete("relTypeCode");
 								fileUploadFormData.delete("relId");
+								fileUploadFormData.delete("body");
+								
 								$.ajax({
 									url : './../file/doUploadAjax',
 									data : fileUploadFormData,
@@ -194,6 +195,8 @@ body, ul, li, h1 {
 									}
 									form.body.value = '';
 									form.file__reply__0__common__attachment__1.value = '';
+									form.file__reply__0__common__attachment__2.value = '';
+									
 								});
 							});
 							/* 파일 업로드 기능 추가하면서 변경된 코드 끝 */
@@ -232,6 +235,15 @@ body, ul, li, h1 {
 										<div class="form-control-box">
 											<input type="file" accept="video/*" capture
 												name="file__reply__0__common__attachment__1">
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th>첨부2 비디오</th>
+									<td>
+										<div class="form-control-box">
+											<input type="file" accept="video/*" capture
+												name="file__reply__0__common__attachment__2">
 										</div>
 									</td>
 								</tr>
@@ -372,7 +384,11 @@ body, ul, li, h1 {
 					html += '<div class="modify-mode-invisible reply-body">' + Reply.body + '</div>';
 					if (Reply.extra.file__common__attachment__1) {
 			            var file = Reply.extra.file__common__attachment__1;
-			            html += '<video controls style="max-width: 500px;" src="http://localhost:8085/usr/file/streamVideo?id=' + file.id + '">video not supported</video>';
+			            html += '<video controls style="max-width:500px;" src="/usr/file/streamVideo?id=' + file.id + '">video not supported</video>';
+			        }
+					if (Reply.extra.file__common__attachment__2) {
+			            var file = Reply.extra.file__common__attachment__2;
+			            html += '<video controls style="max-width:500px;" src="/usr/file/streamVideo?id=' + file.id + '">video not supported</video>';
 			        }
 					html += '<div class="modify-mode-visible">';
 
