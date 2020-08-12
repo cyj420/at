@@ -66,15 +66,15 @@ public class ArticleController {
 		return sb.toString();
 	}
 	
-	@RequestMapping("/usr/article/add")
+	@RequestMapping("/usr/article/write")
 	public String showAdd() {
-		return "article/add";
+		return "article/write";
 	}
 	
-	@RequestMapping("/usr/article/doAdd")
+	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody
 	public String doAdd(@RequestParam Map<String, Object> param) {
-		int newId = articleService.add(param);
+		int newId = articleService.write(param);
 
 		String msg = newId + "번 게시물이 추가되었습니다.";
 

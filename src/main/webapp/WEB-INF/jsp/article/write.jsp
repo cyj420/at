@@ -5,7 +5,7 @@
 <c:set var="pageTitle" value="게시물 추가" />
 <%@ include file="../part/head.jspf"%>
 	<script>
-		function submitAddForm(form) {
+		function submitWriteForm(form) {
 			form.title.value = form.title.value.trim();
 			if (form.title.value.length == 0) {
 				alert('제목을 입력해주세요.');
@@ -35,7 +35,7 @@
 		margin-right: auto;
 	}
 	</style>
-	<form class="con common-form" action="./doAdd" method="POST" onsubmit="submitAddForm(this); return false;">
+	<form class="con common-form" action="./doWrite" method="POST" onsubmit="submitWriteForm(this); return false;">
 		<div>
 			<div>
 				<label>제목</label>

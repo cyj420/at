@@ -56,7 +56,7 @@ a:hover {
 	</div>
 </c:if>
 
-<a href="./add" class="write-article">글쓰기</a>
+<a href="./write" class="write-article">글쓰기</a>
 <!-- 검색 시작 -->
 <div style="margin-top: 30px;">
 	<form action="/article/list">

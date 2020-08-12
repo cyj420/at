@@ -28,8 +28,8 @@ public class ArticleService {
 		articleDao.delete(id);
 	}
 
-	public int add(Map<String, Object> param) {
-		articleDao.add(param);
+	public int write(Map<String, Object> param) {
+		articleDao.write(param);
 
 		return Util.getAsInt(param.get("id"));
 	}

@@ -29,7 +29,7 @@
 	WHERE id = #{id}
   </update>
   
-  <insert id="add" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+  <insert id="write" parameterType="map" useGeneratedKeys="true" keyProperty="id">
 	INSERT INTO article
 	SET regDate = NOW(),
 	updateDate = NOW(),
