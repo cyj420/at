@@ -124,10 +124,10 @@ body, ul, li, h1 {
 						</tr>
 						<tr>
 							<th>비고</th>
-							<td><a href="./doDelete?id=${article.id}"
+							<td><a href="./../article/doDelete?id=${article.id}"
 								onclick="if ( confirm('삭제하시겠습니까?') == false ) { return false; }">삭제</a>
 
-								<a href="./modify?id=${article.id}">수정</a>
+								<a href="./../article/modify?id=${article.id}">수정</a>
 							</td>
 						</tr>
 					</tbody>
@@ -147,6 +147,57 @@ body, ul, li, h1 {
 							    form.body.focus();
 							    return;
 							}
+
+						    /* 파일 업로드 기능 추가하면서 변경된 코드 시작 */
+							var startUploadFiles = function(onSuccess) {
+								var fileUploadFormData = new FormData(form);
+
+								if ( form.file__reply__0__common__attachment__1.value.length == 0 ) {
+									onSuccess();
+									return;
+								} 
+								
+								fileUploadFormData.delete("relTypeCode");
+								fileUploadFormData.delete("relId");
+								$.ajax({
+									url : './../file/doUploadAjax',
+									data : fileUploadFormData,
+									processData : false,
+									contentType : false,
+									dataType:"json",
+									type : 'POST',
+									success : onSuccess
+								});
+							}
+							var startWriteReply = function(fileIdsStr, onSuccess) {
+								$.ajax({
+									url : './../reply/doWriteReplyAjax',
+									data : {
+										fileIdsStr: fileIdsStr,
+										body: form.body.value,
+										relTypeCode: form.relTypeCode.value,
+										relId: form.relId.value
+									},
+									dataType:"json",
+									type : 'POST',
+									success : onSuccess
+								});
+							};
+							startUploadFiles(function(data) {
+								var idsStr = '';
+								if ( data && data.body && data.body.fileIdsStr ) {
+									idsStr = data.body.fileIdsStr;
+								}
+								startWriteReply(idsStr, function(data) {
+									if ( data.msg ) {
+										alert(data.msg);
+									}
+									form.body.value = '';
+									form.file__reply__0__common__attachment__1.value = '';
+								});
+							});
+							/* 파일 업로드 기능 추가하면서 변경된 코드 끝 */
+							/* 파일 업로드 기능 추가 이전 코드
 							$.post('./doWriteReplyAjax', {
 								relId : param.id,
 								body : form.body.value
@@ -155,30 +206,38 @@ body, ul, li, h1 {
 							}, 'json');
 		
 							form.body.value = '';
+							*/
 						}
 				    </script>
 
-					<form action=""
+					<form class="table-box con form1"
 						onsubmit="Reply__submitWriteForm(this); return false;">
+						<input type="hidden" name="relTypeCode" value="article" /> 
+						<input type="hidden" name="relId" value="${article.id}" />
+					
 						<table>
-							<colgroup>
-								<col width="100" />
-							</colgroup>
 							<tbody>
 								<tr>
 									<th>내용</th>
 									<td>
-										<div>
-											<textarea placeholder="댓글을 작성해주세요." name="body"
-												maxlength="300"></textarea>
+										<div class="form-control-box">
+											<textarea maxlength="300" name="body" placeholder="내용을 입력해주세요."
+												class="height-300"></textarea>
 										</div>
 									</td>
 								</tr>
-
+								<tr>
+									<th>첨부1 비디오</th>
+									<td>
+										<div class="form-control-box">
+											<input type="file" accept="video/*" capture
+												name="file__reply__0__common__attachment__1">
+										</div>
+									</td>
+								</tr>
 								<tr>
 									<th>작성</th>
-									<td><input type="submit" value="작성" /> <input
-										type="reset" value="취소" /></td>
+									<td><input type="submit" value="작성"></td>
 								</tr>
 							</tbody>
 						</table>
@@ -187,7 +246,6 @@ body, ul, li, h1 {
 			</c:if>
 
 			<h1 class="reply-list-title con">댓글 목록</h1>
-			
 			<!-- 여기부터 댓글 리스트 -->
 			<div class="reply-list list table-box con">
 				<table>
@@ -237,13 +295,7 @@ body, ul, li, h1 {
 				var ReplyList__$tbody = ReplyList__$box.find('tbody');
 				var ReplyList__lastLodedId = 0;
 
-				/* var ReplyList__submitModifyFormDone = false; */
-
 				function ReplyList__submitModifyForm(form) {
-				  /* if(ReplyList__submitModifyFormDone){
-					  alert("처리중입니다.");
-					  return;
-				  } */
 				  
 				  form.body.value = form.body.value.trim();
 				  if (form.body.value.length == 0) {
@@ -255,10 +307,9 @@ body, ul, li, h1 {
 				  var id = form.id.value;
 				  var newBody = form.body.value;
 
-				  /* ReplyList__submitModifyFormDone = true; */
-				  
-				  $.post('./doModifyReplyAjax',{
+				  $.post('./../reply/doModifyReplyAjax',{
 					  id : id,
+					  relTypeCode : 'article',
 					  body : newBody
 				  }, function(data){
 					  if(data.resultCode && data.resultCode.substr(0,2)=='S-'){
@@ -283,7 +334,7 @@ body, ul, li, h1 {
 				}
 				
 				function ReplyList__loadMore() {
-					$.get('getForPrintReplies', {
+					$.get('../reply/getForPrintReplies', {
 						articleId : param.id,
 						from : ReplyList__lastLodedId + 1
 					}, ReplyList__loadMoreCallback, 'json');
@@ -296,7 +347,7 @@ body, ul, li, h1 {
 					var $tr = $(el).closest('tr');
 					var id = $tr.attr('data-id');	//못 찾았던 이유 > data-id="" 이런 형태여야 하는데 '='을 안 붙였음.
 					
-					$.post('./doDeleteReplyAjax',{
+					$.post('./../reply/doDeleteReplyAjax',{
 						id : id
 					}, function(data){
 						$tr.remove();
@@ -318,7 +369,11 @@ body, ul, li, h1 {
 					html += '<td>' + Reply.regDate + '</td>';
 					html += '<td>' + Reply.extra.writer + '</td>';
 					html += '<td class="reply-body-td">';
-					html += '<div class="modify-mode-invisible">' + Reply.body + '</div>';
+					html += '<div class="modify-mode-invisible reply-body">' + Reply.body + '</div>';
+					if (Reply.extra.file__common__attachment__1) {
+			            var file = Reply.extra.file__common__attachment__1;
+			            html += '<video controls style="max-width: 500px;" src="http://localhost:8085/usr/file/streamVideo?id=' + file.id + '">video not supported</video>';
+			        }
 					html += '<div class="modify-mode-visible">';
 
 					html += '<form action="" onsubmit="ReplyList__submitModifyForm(this); return false;">';
@@ -326,7 +381,6 @@ body, ul, li, h1 {
 					html += '<textarea maxlength="300" name="body"></textarea>';
 					html += '<button type="submit" onclick="Article__turnOffModifyMode(this);">수정완료</button>';
 					html += '</form>';
-					
 					html += '</div>';
 					html += '</td>';
 					html += '<td>';
@@ -354,7 +408,7 @@ body, ul, li, h1 {
 						<c:forEach var="i" begin="0" end="${articles.size()-1 }" step="1">
 							<c:if test="${articles[i].id == param.id }">
 								<div>
-									<a href="./detail?id=${articles[i+1].id }">이전글</a>
+									<a href="./../article/detail?id=${articles[i+1].id }">이전글</a>
 								</div>
 							</c:if>
 						</c:forEach>
@@ -364,14 +418,14 @@ body, ul, li, h1 {
 						<c:forEach var="i" begin="0" end="${articles.size()-1 }" step="1">
 							<c:if test="${articles[i].id == param.id }">
 								<div>
-									<a href="./detail?id=${articles[i-1].id }">다음글</a>
+									<a href="./../article/detail?id=${articles[i-1].id }">다음글</a>
 								</div>
 							</c:if>
 						</c:forEach>
 					</c:if>
 				</div>
 			</div>
-			<a href="./list?searchKeyword=&page=1">게시물 리스트로 돌아가기</a>
+			<a href="./../article/list?searchKeyword=&page=1">게시물 리스트로 돌아가기</a>
 		</div>
 	</c:if>
 </c:forEach>

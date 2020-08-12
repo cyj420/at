@@ -23,26 +23,12 @@ public class ReplyController {
 	@Autowired
 	private ReplyService replyService;
 	
-	@RequestMapping("/usr/article/doWriteReplyAjax")
-	@ResponseBody
-	public ResultData doWriteReplyAjax(@RequestParam Map<String, Object> param, HttpServletRequest request) {
-		Map<String, Object> rsDataBody = new HashMap<>();
-		param.put("memberId", request.getAttribute("loginedMemberId"));
-		param.put("relTypeCode", "article");
-		
-		Util.changeMapKey(param, "relId", "relId");
-		
-		int newReplyId = replyService.writeReply(param);
-
-		return new ResultData("S-1", String.format("%d번 댓글이 생성되었습니다.", newReplyId), rsDataBody);
-	}
-	
-	@RequestMapping("/usr/article/getForPrintReplies")
+	@RequestMapping("/usr/reply/getForPrintReplies")
 	@ResponseBody
 	public ResultData getForPrintReplies(@RequestParam Map<String, Object> param, HttpServletRequest req) {
 		Member loginedMember = (Member)req.getAttribute("loginedMember");
 		Map<String, Object> rsDataBody = new HashMap<>();
-
+		
 		param.put("relTypeCode", "article");
 		Util.changeMapKey(param, "articleId", "relId");
 		
@@ -50,18 +36,33 @@ public class ReplyController {
 		
 		List<Reply> replies = replyService.getForPrintReplies(param);
 		rsDataBody.put("replies", replies);
-
+		
 		return new ResultData("S-1", String.format("%d개의 댓글을 불러왔습니다.", replies.size()), rsDataBody);
 	}
 	
-	@RequestMapping("/usr/article/doModifyReplyAjax")
+	@RequestMapping("/usr/reply/doWriteReplyAjax")
+	@ResponseBody
+	public ResultData doWriteReplyAjax(@RequestParam Map<String, Object> param, HttpServletRequest request) {
+		Map<String, Object> rsDataBody = new HashMap<>();
+		param.put("memberId", request.getAttribute("loginedMemberId"));
+		param.put("relTypeCode", "article");
+		
+//		Util.changeMapKey(param, "relId", "relId");
+		
+		int newReplyId = replyService.writeReply(param);
+		rsDataBody.put("replyId", newReplyId);
+
+		return new ResultData("S-1", String.format("%d번 댓글이 생성되었습니다.", newReplyId), rsDataBody);
+	}
+	
+	@RequestMapping("/usr/reply/doModifyReplyAjax")
 	@ResponseBody
 	public ResultData doReplyModify(@RequestParam int id, String body) {
 		replyService.modifyReplyById(""+id, body);
 		return new ResultData("S-1", String.format("%d번 댓글을 수정하였습니다.", id));
 	}
 	
-	@RequestMapping("/usr/article/doDeleteReplyAjax")
+	@RequestMapping("/usr/reply/doDeleteReplyAjax")
 	@ResponseBody
 	public ResultData doDeleteReplyAjax(int id, HttpServletRequest req) {
 		Member loginedMember = (Member) req.getAttribute("loginedMember");

@@ -10,7 +10,7 @@
 	body = #{body},
 	memberId = #{memberId},
 	relId = #{relId},
-	relTypeCode = 'article',
+	relTypeCode = #{relTypeCode},
 	displayStatus = 1
   </insert>
   
