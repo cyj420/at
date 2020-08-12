@@ -321,7 +321,7 @@ body, ul, li, h1 {
 					html += '<div class="modify-mode-invisible">' + Reply.body + '</div>';
 					html += '<div class="modify-mode-visible">';
 
-					html += '<form action="" onclick="ReplyList__submitModifyForm(this); return false;">';
+					html += '<form action="" onsubmit="ReplyList__submitModifyForm(this); return false;">';
 					html += '<input type="hidden" name="id" value="' + Reply.id + '" />';
 					html += '<textarea maxlength="300" name="body"></textarea>';
 					html += '<button type="submit" onclick="Article__turnOffModifyMode(this);">수정완료</button>';
