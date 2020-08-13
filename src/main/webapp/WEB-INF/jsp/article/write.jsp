@@ -103,7 +103,7 @@ th {
 				success : onSuccess
 			});
 		}
-		ArticleWriteForm__submitDone = true;
+		/* ArticleWriteForm__submitDone = true; */
 		startUploadFiles(function(data) {
 			var fileIdsStr = '';
 			if ( data && data.body && data.body.fileIdsStr ) {
@@ -173,30 +173,4 @@ th {
 	</table>
 </form>
 <!-- 추가 끝 -->
-
-<!-- 
-	<form class="con common-form" action="./doWrite" method="POST" onsubmit="Article__submitWriteForm(this); return false;">
-		<div>
-			<div>
-				<label>제목</label>
-				<input name="title" type="text" placeholder="제목"
-					autofocus="autofocus" autocomplete="off" style="width: 300px;">
-			</div>
-		</div>
-	
-		<div style="margin-top: 20px; margin-bottom: 20px;">
-			<div>
-				<label>내용</label>
-				<textarea name="body" placeholder="내용" autocomplete="off" style="width: 300px;"></textarea>
-			</div>
-		</div>
-	
-		<div class="button">
-			<div>
-				<input type="submit" value="작성"> 
-				<input type="reset" value="취소" onclick="history.back();">
-			</div>
-		</div>
-	</form>
-	 -->
 <%@ include file="../part/foot.jspf"%>

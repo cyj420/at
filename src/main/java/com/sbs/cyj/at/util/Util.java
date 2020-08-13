@@ -3,15 +3,20 @@ package com.sbs.cyj.at.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.cache.LoadingCache;
+import com.sbs.cyj.at.dto.Article;
+import com.sbs.cyj.at.dto.File;
 
 public class Util {
 	public static int getAsInt(Object object) {
@@ -138,6 +143,40 @@ public class Util {
 			return (T)cache.get(key);
 		} catch (ExecutionException e) {
 			return null;
+		}
+	}
+
+	public static void putExtraVal(Object obj, String key, Object value) {
+		Class cls = obj.getClass();
+
+		try {
+			Method getExtraMethod = cls.getDeclaredMethod("getExtra");
+			Map<String, Object> extra = (Map<String, Object>) getExtraMethod.invoke(obj);
+
+			if (extra == null) {
+				extra = new HashMap<>();
+				extra.put(key, value);
+
+				Method setExtraMethod = cls.getDeclaredMethod("setExtra", Map.class);
+				setExtraMethod.invoke(obj, extra);
+			} else {
+				extra.put(key, value);
+			}
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

@@ -39,7 +39,7 @@
 	displayStatus = 1
   </insert>
   
-  <select id="getArticleById" parameterType="long" resultType="Article">
+  <select id="getArticleById" parameterType="int" resultType="Article">
 	SELECT *
 	FROM article
 	WHERE id = #{id}
@@ -52,4 +52,5 @@
 	body = #{body}
 	WHERE id = #{id}
   </update>
+  
 </mapper>

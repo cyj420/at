@@ -17,7 +17,7 @@ public interface ArticleDao {
 
 	public void write(Map<String, Object> param);
 
-	Article getArticleById(long id);
+	Article getArticleById(int id);
 
 	void modify(Map<String, Object> param);
 }

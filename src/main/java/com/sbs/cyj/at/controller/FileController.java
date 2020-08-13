@@ -33,23 +33,24 @@ import com.sbs.cyj.at.util.Util;
 public class FileController {
 	@Autowired
 	private FileService fileService;
-	
 	@Autowired
 	private VideoStreamService videoStreamService;
 
 	private LoadingCache<Integer, File> fileCache = CacheBuilder.newBuilder().maximumSize(100)
-			.expireAfterAccess(10, TimeUnit.MINUTES).build(new CacheLoader<Integer, File>() {
+			.expireAfterAccess(2, TimeUnit.MINUTES).build(new CacheLoader<Integer, File>() {
 				@Override
 				public File load(Integer fileId) {
 					return fileService.getFileById(fileId);
 				}
 			});
-	
+
 	@RequestMapping("/usr/file/streamVideo")
-	public ResponseEntity<byte[]> streamVideo(@RequestHeader(value = "Range", required = false) String httpRangeList, int id) {
+	public ResponseEntity<byte[]> streamVideo(@RequestHeader(value = "Range", required = false) String httpRangeList,
+			int id) {
 		File file = Util.getCacheData(fileCache, id);
 
-		return videoStreamService.prepareContent(new ByteArrayInputStream(file.getBody()), file.getFileSize(), file.getFileExt(), httpRangeList);
+		return videoStreamService.prepareContent(new ByteArrayInputStream(file.getBody()), file.getFileSize(),
+				file.getFileExt(), httpRangeList);
 	}
 
 	@RequestMapping("/usr/file/doUploadAjax")
@@ -69,9 +70,10 @@ public class FileController {
 			if (fileInputNameBits[0].equals("file")) {
 				byte[] fileBytes = Util.getFileBytesFromMultipartFile(multipartFile);
 
-				if ( fileBytes == null || fileBytes.length == 0 ) {
+				if (fileBytes == null || fileBytes.length == 0) {
 					continue;
 				}
+
 				String relTypeCode = fileInputNameBits[1];
 				int relId = Integer.parseInt(fileInputNameBits[2]);
 				String typeCode = fileInputNameBits[3];
@@ -81,12 +83,48 @@ public class FileController {
 				String fileExtTypeCode = Util.getFileExtTypeCodeFromFileName(multipartFile.getOriginalFilename());
 				String fileExtType2Code = Util.getFileExtType2CodeFromFileName(multipartFile.getOriginalFilename());
 				String fileExt = Util.getFileExtFromFileName(multipartFile.getOriginalFilename()).toLowerCase();
-				int fileSize = (int)multipartFile.getSize();
+				int fileSize = (int) multipartFile.getSize();
 
-				int fileId = fileService.saveFile(relTypeCode, relId, typeCode, type2Code, fileNo, originFileName,
-						fileExtTypeCode, fileExtType2Code, fileExt, fileBytes, fileSize);
+				int oldFileId = fileService.getFileId(relTypeCode, relId, typeCode, type2Code, fileNo);
 
-				fileIds.add(fileId);
+				boolean needToUpdate = oldFileId > 0;
+
+				if (needToUpdate) {
+					fileService.updateFile(oldFileId, originFileName, fileExtTypeCode, fileExtType2Code, fileExt,
+							fileBytes, fileSize);
+
+					fileCache.refresh(oldFileId);
+
+				} else {
+					int fileId = fileService.saveFile(relTypeCode, relId, typeCode, type2Code, fileNo, originFileName,
+							fileExtTypeCode, fileExtType2Code, fileExt, fileBytes, fileSize);
+
+					fileIds.add(fileId);
+				}
+			}
+		}
+
+		int deleteCount = 0;
+
+		for (String inputName : param.keySet()) {
+			String[] inputNameBits = inputName.split("__");
+
+			if (inputNameBits[0].equals("deleteFile")) {
+				String relTypeCode = inputNameBits[1];
+				int relId = Integer.parseInt(inputNameBits[2]);
+				String typeCode = inputNameBits[3];
+				String type2Code = inputNameBits[4];
+				int fileNo = Integer.parseInt(inputNameBits[5]);
+
+				int oldFileId = fileService.getFileId(relTypeCode, relId, typeCode, type2Code, fileNo);
+
+				boolean needToDelete = oldFileId > 0;
+
+				if (needToDelete) {
+					fileService.deleteFile(oldFileId);
+					fileCache.refresh(oldFileId);
+					deleteCount++;
+				}
 			}
 		}
 
@@ -94,6 +132,7 @@ public class FileController {
 		rsDataBody.put("fileIdsStr", Joiner.on(",").join(fileIds));
 		rsDataBody.put("fileIds", fileIds);
 
-		return new ResultData("S-1", String.format("%d개의 파일을 저장했습니다.", fileIds.size()), rsDataBody);
+		return new ResultData("S-1", String.format("%d개의 파일을 저장했습니다. %d개의 파일을 삭제했습니다.", fileIds.size(), deleteCount),
+				rsDataBody);
 	}
 }

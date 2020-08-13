@@ -5,10 +5,12 @@
 <mapper namespace="com.sbs.cyj.at.dao.FileDao">
 
 	<insert id="save" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO `file`
+		INSERT
+		INTO `file`
 		SET regDate = NOW(),
 		updateDate = NOW(),
-		relTypeCode = #{relTypeCode},
+		relTypeCode =
+		#{relTypeCode},
 		relId = #{relId},
 		originFileName = #{originFileName},
 		fileExt = #{fileExt},
@@ -18,10 +20,27 @@
 		fileExtTypeCode = #{fileExtTypeCode},
 		fileExtType2Code = #{fileExtType2Code},
 		fileNo = #{fileNo},
-		`body` = #{body}
+		`body` =
+		#{body}
 	</insert>
-	
-	<select id="getFilesRelTypeCodeAndRelIdAndTypeCodeAndType2CodeAndFileNo" resultType="File">
+
+	<update id="update">
+		UPDATE `file`
+		<set>
+			updateDate = NOW(),
+			<if test="originFileName != null">originFileName = #{originFileName},</if>
+			<if test="fileExt != null">fileExt = #{fileExt},</if>
+			<if test="fileSize != null">fileSize = #{fileSize},</if>
+			<if test="fileExtTypeCode != null">fileExtTypeCode = #{fileExtTypeCode},</if>
+			<if test="fileExtType2Code != null">fileExtType2Code = #{fileExtType2Code},</if>
+			<if test="body != null">body = #{body},</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<select
+		id="getFilesRelTypeCodeAndRelIdsAndTypeCodeAndType2CodeAndFileNo"
+		resultType="File">
 		SELECT id, regDate, updateDate, relTypeCode, relId, originFileName,
 		fileExt, typeCode, type2Code, fileExtTypeCode, fileExtType2Code,
 		fileNo, fileSize
@@ -37,9 +56,11 @@
 		AND
 		type2Code = #{type2Code}
 		AND fileNo = #{fileNo}
+		ORDER BY relId
 	</select>
-	
-	<select id="getFilesRelTypeCodeAndRelIdAndTypeCodeAndType2Code" resultType="File">
+
+	<select id="getFilesRelTypeCodeAndRelIdsAndTypeCodeAndType2Code"
+		resultType="File">
 		SELECT id, regDate, updateDate, relTypeCode, relId, originFileName,
 		fileExt, typeCode, type2Code, fileExtTypeCode, fileExtType2Code,
 		fileNo, fileSize
@@ -55,6 +76,23 @@
 		AND
 		type2Code = #{type2Code}
 		ORDER BY relId, fileNo
+	</select>
+
+	<select id="getFilesRelTypeCodeAndRelIdAndTypeCodeAndType2Code"
+		resultType="File">
+		SELECT id, regDate, updateDate, relTypeCode, relId,
+		originFileName,
+		fileExt, typeCode, type2Code, fileExtTypeCode,
+		fileExtType2Code,
+		fileNo, fileSize
+		FROM file
+		WHERE 1
+		AND relId = #{relId}
+		AND relTypeCode = #{relTypeCode}
+		AND typeCode = #{typeCode}
+		AND
+		type2Code = #{type2Code}
+		ORDER BY fileNo
 	</select>
 
 	<select id="getFileById" resultType="File">
@@ -84,4 +122,20 @@
 		= #{relTypeCode}
 	</delete>
 
-</mapper> 
+	<delete id="deleteFile">
+		DELETE FROM file
+		WHERE id = #{id}
+	</delete>
+
+	<select id="getFileId" resultType="int">
+		SELECT id
+		FROM file
+		WHERE
+		relTypeCode = #{relTypeCode}
+		AND relId = #{relId}
+		AND typeCode =
+		#{typeCode}
+		AND type2Code = #{type2Code}
+		AND fileNo = #{fileNo}
+	</select>
+</mapper>

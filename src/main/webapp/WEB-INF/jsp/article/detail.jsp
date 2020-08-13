@@ -87,13 +87,14 @@ body, ul, li, h1 {
 	box-sizing: border-box;
 	display: block;
 }
+video{
+	max-width: 70%;
+}
 </style>
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 <!-- 본문 내용 시작 -->
-<c:forEach items="${articles}" var="article">
-	<c:if test="${article.id == param.id}">
 <div class="table-box con">
 	<div class="article-detail-list list con">
 		<table>
@@ -391,13 +392,13 @@ body, ul, li, h1 {
 			html += '<td>' + reply.extra.writer + '</td>';
 			html += '<td class="reply-body-td">';
 			html += '<div class="modify-mode-invisible reply-body">' + reply.body + '</div>';
-			if (reply.extra.file__common__attachment__1) {
-	            var file = reply.extra.file__common__attachment__1;
-	            html += '<video controls style="max-width:500px;" src="/usr/file/streamVideo?id=' + file.id + '">video not supported</video>';
-	        }
-			if (reply.extra.file__common__attachment__2) {
-	            var file = reply.extra.file__common__attachment__2;
-	            html += '<video controls style="max-width:500px;" src="/usr/file/streamVideo?id=' + file.id + '">video not supported</video>';
+			if ( reply.extra.file__common__attachment ) {
+				for ( var no in reply.extra.file__common__attachment ) {
+					var file = reply.extra.file__common__attachment[no];
+		            html += '<div class="video-box">';
+			        html += '<video controls src="/usr/file/streamVideo?id=' + file.id + '&updateDate=' + file.updateDate + '">video not supported</video>';
+			        html += '</div>';				
+				}
 	        }
 			html += '<div class="modify-mode-visible">';
 
@@ -424,35 +425,38 @@ body, ul, li, h1 {
 		
 		ReplyList__loadMore();
 	</script>
-			<!-- 여기까지 댓글 리스트 -->
+</div>
+<!-- 여기까지 댓글 리스트 -->
 
 <!-- 이전글 / 다음글 -->
-
-		<div class="another-article">
-			<div style="margin-top: 20px; margin-bottom: 20px;">
-				<c:if test="${articles[size-1].id != param.id}">
-					<c:forEach var="i" begin="0" end="${articles.size()-1 }" step="1">
-						<c:if test="${articles[i].id == param.id }">
-							<div>
-								<a href="./../article/detail?id=${articles[i+1].id }">이전글</a>
-							</div>
-						</c:if>
-					</c:forEach>
-				</c:if>
-
-				<c:if test="${articles[0].id != param.id}">
-					<c:forEach var="i" begin="0" end="${articles.size()-1 }" step="1">
-						<c:if test="${articles[i].id == param.id }">
-							<div>
-								<a href="./../article/detail?id=${articles[i-1].id }">다음글</a>
-							</div>
-						</c:if>
-					</c:forEach>
-				</c:if>
+<div class="con">
+	<c:forEach items="${articles}" var="article">
+		<c:if test="${article.id == param.id}">
+			<div class="another-article">
+				<div style="margin-top: 20px; margin-bottom: 20px;">
+					<c:if test="${articles[size-1].id != param.id}">
+						<c:forEach var="i" begin="0" end="${articles.size()-1 }" step="1">
+							<c:if test="${articles[i].id == param.id }">
+								<div>
+									<a href="./../article/detail?id=${articles[i+1].id }">이전글</a>
+								</div>
+							</c:if>
+						</c:forEach>
+					</c:if>
+	
+					<c:if test="${articles[0].id != param.id}">
+						<c:forEach var="i" begin="0" end="${articles.size()-1 }" step="1">
+							<c:if test="${articles[i].id == param.id }">
+								<div>
+									<a href="./../article/detail?id=${articles[i-1].id }">다음글</a>
+								</div>
+							</c:if>
+						</c:forEach>
+					</c:if>
+				</div>
 			</div>
-		</div>
-		<a href="./../article/list?searchKeyword=&page=1">게시물 리스트로 돌아가기</a>
-		</div>
-	</c:if>
-</c:forEach>
+			<a href="./../article/list?searchKeyword=&page=1">게시물 리스트로 돌아가기</a>
+		</c:if>
+	</c:forEach>
+</div>
 <%@ include file="../part/foot.jspf"%>
