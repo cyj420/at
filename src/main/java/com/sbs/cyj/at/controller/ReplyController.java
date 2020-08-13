@@ -45,7 +45,6 @@ public class ReplyController {
 	public ResultData doWriteReplyAjax(@RequestParam Map<String, Object> param, HttpServletRequest request) {
 		Map<String, Object> rsDataBody = new HashMap<>();
 		param.put("memberId", request.getAttribute("loginedMemberId"));
-		param.put("relTypeCode", "article");
 		
 //		Util.changeMapKey(param, "relId", "relId");
 		

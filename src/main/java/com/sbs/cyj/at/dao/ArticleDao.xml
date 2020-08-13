@@ -35,7 +35,7 @@
 	updateDate = NOW(),
 	title = #{title},
 	body = #{body},
-	memberId = 1,
+	memberId = #{memberId},
 	displayStatus = 1
   </insert>
   
@@ -52,5 +52,4 @@
 	body = #{body}
 	WHERE id = #{id}
   </update>
-  
 </mapper>

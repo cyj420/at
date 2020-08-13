@@ -19,7 +19,7 @@
 	FROM reply
 	WHERE id = #{id}
   </select>
-  
+
   <update id="modifyReplyById" parameterType="String">
 	UPDATE reply
 	SET body = #{body},

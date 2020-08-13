@@ -3,6 +3,8 @@ package com.sbs.cyj.at.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,8 +42,10 @@ public class ArticleController {
 	
 	@RequestMapping("/usr/article/detail")
 	public String showDetail(Model model, int id) {
+		Article article = articleService.getArticleById(id);
 		List<Article> articles = articleService.getForPrintArticles();
 		
+		model.addAttribute("article", article);
 		model.addAttribute("articles", articles);
 		model.addAttribute("size", articles.size());
 		
@@ -73,15 +77,21 @@ public class ArticleController {
 	
 	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody
-	public String doAdd(@RequestParam Map<String, Object> param) {
-		int newId = articleService.write(param);
-
-		String msg = newId + "번 게시물이 추가되었습니다.";
+	public String doAdd(@RequestParam Map<String, Object> param, HttpServletRequest req) {
+//		Map<String, Object> rsDataBody = new HashMap<>();
+		param.put("memberId", req.getAttribute("loginedMemberId"));
+		param.put("relTypeCode", "article");
+		
+		
+		int newArticleId = articleService.write(param);
+//		rsDataBody.put("articleId", newArticleId);
+		
+		String msg = newArticleId + "번 게시물이 추가되었습니다.";
 
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("alert('" + msg + "');");
-		sb.append("location.replace('./detail?id=" + newId + "');");
+		sb.append("location.replace('./detail?id=" + newArticleId + "');");
 
 		sb.insert(0, "<script>");
 		sb.append("</script>");
@@ -90,7 +100,7 @@ public class ArticleController {
 	}
 	
 	@RequestMapping("/usr/article/modify")
-	public String showModify(Model model, long id) {
+	public String showModify(Model model, int id) {
 		Article article = articleService.getArticleById(id);
 		model.addAttribute("article", article);
 		return "article/modify";
