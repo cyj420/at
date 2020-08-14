@@ -42,7 +42,9 @@ public class ArticleService {
 		int id = Util.getAsInt(param.get("id"));
 
 		String fileIdsStr = (String)param.get("fileIdsStr");
-
+		System.out.println("=======writeService========");
+		System.out.println("fileIdsStr : "+fileIdsStr);
+		System.out.println("fileIdsStr.length() : "+fileIdsStr.length());
 		if (fileIdsStr != null && fileIdsStr.length() > 0) {
 			List<Integer> fileIds = Arrays.asList(fileIdsStr.split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
 	
@@ -81,6 +83,8 @@ public class ArticleService {
 			System.out.println("===fileIdsStr != null===");
 		}
 		System.out.println("=======1차=======");
+		System.out.println("fileIdsStr : "+fileIdsStr);
+		System.out.println("fileIdsStr.length() : "+fileIdsStr.length());
 		if(fileIdsStr.length() > 0) {
 			// 이게 실행이 안 됨.
 			
@@ -90,8 +94,6 @@ public class ArticleService {
 		if (fileIdsStr != null && fileIdsStr.length() > 0) {
 			List<Integer> fileIds = Arrays.asList(fileIdsStr.split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
 	
-			// 파일이 먼저 생성된 후에, 관련 데이터가 생성되는 경우에는, file의 relId가 일단 0으로 저장된다.
-			// 그것을 뒤늦게라도 이렇게 고쳐야 한다.
 			for ( int fileId : fileIds ) {
 				fileService.changeRelId(fileId, id);			
 			}

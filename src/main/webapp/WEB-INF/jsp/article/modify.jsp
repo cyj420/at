@@ -77,20 +77,20 @@ th {
 	var maxSizeMb = 50;
 	var maxSize = maxSizeMb * 1024 * 1024 //50MB
 	
-	if (form.file__article__0__common__attachment__1.value) {
-		if ( form.file__article__0__common__attachment__1.files[0].size > maxSize ) {
+	if (form.file__article__${article.id }__common__attachment__1.value) {
+		if ( form.file__article__${article.id }__common__attachment__1.files[0].size > maxSize ) {
 			alert(maxSizeMb + "MB 이하의 파일을 업로드 해주세요.");
 			return;
 		} 
 	}
-	if (form.file__article__0__common__attachment__2.value) {
-		if ( form.file__article__0__common__attachment__2.files[0].size > maxSize ) {
+	if (form.file__article__${article.id }__common__attachment__2.value) {
+		if ( form.file__article__${article.id }__common__attachment__2.files[0].size > maxSize ) {
 			alert(maxSizeMb + "MB 이하의 파일을 업로드 해주세요.");
 			return;
 		} 
 	}
 	var startUploadFiles = function(onSuccess) {
-		if ( form.file__article__0__common__attachment__1.value.length == 0 && form.file__article__0__common__attachment__2.value.length == 0 ) {
+		if ( form.file__article__${article.id }__common__attachment__1.value.length == 0 && form.file__article__${article.id }__common__attachment__2.value.length == 0 ) {
 			onSuccess();
 			return;
 		}
@@ -115,8 +115,8 @@ th {
 			fileIdsStr = data.body.fileIdsStr;
 		}
 		form.fileIdsStr.value = fileIdsStr;
-		form.file__article__0__common__attachment__1.value = '';
-		form.file__article__0__common__attachment__2.value = '';
+		form.file__article__${article.id }__common__attachment__1.value = '';
+		form.file__article__${article.id }__common__attachment__2.value = '';
 		
 		form.submit();
 	});
@@ -127,7 +127,7 @@ th {
 		onsubmit="Article__submitModifyForm(this); return false;">
 		<input type="hidden" name="id" value="${param.id }"/>
 		<input type="hidden" name="fileIdsStr" />
-		<input type="hidden" name="redirectUri" value="/usr/article/detail?id=#id">
+		<%-- <input type="hidden" name="redirectUri" value="/usr/article/detail?id=${param.id}"> --%>
 		
 		<table>
 			<colgroup>
@@ -158,7 +158,7 @@ th {
 						<div class="form-control-box">
 							<c:if test="${article.extra.file__common__attachment['1'] == null}">
 							<input type="file" accept="video/*"
-								name="file__article__0__common__attachment__1">
+								name="file__article__${article.id }__common__attachment__1">
 							</c:if>
 							<c:if test="${article.extra.file__common__attachment['1'] != null}">
 							<div>동영상 파일 존재</div>
@@ -172,7 +172,7 @@ th {
 						<div class="form-control-box">
 							<c:if test="${article.extra.file__common__attachment['2'] == null}">
 							<input type="file" accept="video/*"
-								name="file__article__0__common__attachment__2">
+								name="file__article__${article.id }__common__attachment__2">
 							</c:if>
 							<c:if test="${article.extra.file__common__attachment['2'] != null}">
 							<div>동영상 파일 존재</div>

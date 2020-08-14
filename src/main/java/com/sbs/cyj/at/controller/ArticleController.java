@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sbs.cyj.at.dto.Article;
 import com.sbs.cyj.at.dto.Member;
 import com.sbs.cyj.at.service.ArticleService;
+import com.sbs.cyj.at.util.Util;
 
 @Controller
 public class ArticleController {
@@ -82,7 +83,8 @@ public class ArticleController {
 	
 	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody
-	public String doAdd(@RequestParam Map<String, Object> param, HttpServletRequest req) {
+	public String doWrite(@RequestParam Map<String, Object> param, HttpServletRequest req) {
+		System.out.println("====con====");
 		param.put("memberId", req.getAttribute("loginedMemberId"));
 		param.put("relTypeCode", "article");
 		
@@ -111,7 +113,8 @@ public class ArticleController {
 	
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
-	public String doModify(@RequestParam Map<String, Object> param, int id) {
+	public String doModify(@RequestParam Map<String, Object> param, HttpServletRequest req, int id) {
+		Map<String, Object> newParam = Util.getNewMapOf(param, "title", "body", "fileIdsStr", "articleId", "id");
 		param.put("relTypeCode", "article");
 		
 		articleService.modify(param);
@@ -125,6 +128,8 @@ public class ArticleController {
 
 		sb.insert(0, "<script>");
 		sb.append("</script>");
+		
+		System.out.println(sb.toString());
 
 		return sb.toString();
 	}
