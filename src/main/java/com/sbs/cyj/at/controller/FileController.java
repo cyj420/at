@@ -92,13 +92,12 @@ public class FileController {
 				if (needToUpdate) {
 					fileService.updateFile(oldFileId, originFileName, fileExtTypeCode, fileExtType2Code, fileExt,
 							fileBytes, fileSize);
-
+					
 					fileCache.refresh(oldFileId);
-
 				} else {
 					int fileId = fileService.saveFile(relTypeCode, relId, typeCode, type2Code, fileNo, originFileName,
 							fileExtTypeCode, fileExtType2Code, fileExt, fileBytes, fileSize);
-
+					
 					fileIds.add(fileId);
 				}
 			}

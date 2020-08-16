@@ -47,9 +47,11 @@
   
   <update id="modify" parameterType="map">
 	UPDATE article
-	SET title = #{title},
+	<set>
 	updateDate = NOW(),
-	body = #{body}
+	<if test="title != null">title = #{title},</if>
+	<if test="body != null">body = #{body},</if>
+	</set>
 	WHERE id = #{id}
   </update>
   

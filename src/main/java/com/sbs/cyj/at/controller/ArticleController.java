@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sbs.cyj.at.dto.Article;
 import com.sbs.cyj.at.dto.Member;
+import com.sbs.cyj.at.dto.ResultData;
 import com.sbs.cyj.at.service.ArticleService;
 import com.sbs.cyj.at.util.Util;
 
@@ -105,7 +106,8 @@ public class ArticleController {
 	}
 	
 	@RequestMapping("/usr/article/modify")
-	public String showModify(Model model, int id) {
+	public String showModify(Model model, int id, @RequestParam Map<String, Object> param, HttpServletRequest req) {
+		Member loginedMember = (Member) req.getAttribute("loginedMember");
 		Article article = articleService.getArticleById(id);
 		model.addAttribute("article", article);
 		return "article/modify";
@@ -113,11 +115,21 @@ public class ArticleController {
 	
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
-	public String doModify(@RequestParam Map<String, Object> param, HttpServletRequest req, int id) {
+	public String doModify(@RequestParam Map<String, Object> param, HttpServletRequest req, int id, Model model) {
 		Map<String, Object> newParam = Util.getNewMapOf(param, "title", "body", "fileIdsStr", "articleId", "id");
-		param.put("relTypeCode", "article");
+		Member loginedMember = (Member)req.getAttribute("loginedMember");
+		Article article = articleService.getArticleById(id);
 		
-		articleService.modify(param);
+		ResultData checkActorCanModifyResultData = articleService.checkActorCanModify(loginedMember, id);
+		
+		if(checkActorCanModifyResultData.isFail()) {
+			model.addAttribute("historyBack", true);
+			model.addAttribute("msg", checkActorCanModifyResultData.getMsg());
+			
+			return "common/redirect";
+		}
+		
+		articleService.modify(newParam);
 
 		String msg = id + "번 게시물이 수정되었습니다.";
 

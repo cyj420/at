@@ -55,6 +55,14 @@ th {
 }
 </style>
 <script>
+	var ArticleWriteForm__submitDone = false;
+	
+	function ArticleWriteForm__submit(form){
+		if (ArticleWriteForm__submitDone){
+			alert("처리중입니다.");
+			return;
+		}
+	}
 	function Article__submitWriteForm(form) {
 		form.title.value = form.title.value.trim();
 		if (form.title.value.length == 0) {
@@ -103,7 +111,9 @@ th {
 				success : onSuccess
 			});
 		}
-		/* ArticleWriteForm__submitDone = true; */
+
+		ArticleWriteForm__submitDone = true;
+		
 		startUploadFiles(function(data) {
 			var fileIdsStr = '';
 			if ( data && data.body && data.body.fileIdsStr ) {
